@@ -17,6 +17,8 @@ export class Artifact<Version extends string> {
   public async forceDownload() {
     await download(this.url, {
       file: this.path,
+    }, {
+      redirect: 'follow',
     })
   }
 
