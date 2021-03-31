@@ -8,6 +8,7 @@ export class Artifact<Version extends string> {
   constructor(public readonly version: Version) {}
   public readonly url = wasiFileUrl(this.version)
   public readonly name = `sane-fmt@${this.version}.wasm`
+  public readonly dir = join(ROOT, 'artifacts')
   public readonly path = join(ROOT, 'artifacts', this.name)
 
   public exists() {
@@ -16,7 +17,8 @@ export class Artifact<Version extends string> {
 
   public async forceDownload() {
     await download(this.url, {
-      file: this.path,
+      dir: this.dir,
+      file: this.name,
     }, {
       redirect: 'follow',
     })
