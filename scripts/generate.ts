@@ -31,32 +31,18 @@ if (remainingFlags.length) {
 
 const { overwrite } = res.value
 
-const downloadOptions: DownloadOptions = {
-  overwrite,
-  log: console.error,
-}
-
-const targetVersions = res.remaining().rawValues()
-if (!targetVersions.length) {
-  console.error(`missing targets`)
+const [targetVersion, ...remainingValues] = res.remaining().rawValues()
+if (remainingValues.length) {
+  console.error('Excessive arguments', remainingValues)
   throw Deno.exit(1)
 }
 
-const results = await Promise.all(
-  targetVersions.map(version => {
-    const artifact = new Artifact(version)
-    return artifact.runDownloader(downloadOptions).then(
-      () => true,
-      error => {
-        console.error(`${version}: ${error}`)
-        return false
-      },
-    )
-  }),
-)
-
-const errorCount = results.filter(success => !success).length
-if (errorCount) {
-  console.error(`${errorCount} errors occurred.`)
+try {
+  await new Artifact(targetVersion).runDownloader({
+    overwrite,
+    log: console.error,
+  })
+} catch (error) {
+  console.error(error)
   throw Deno.exit(1)
 }
