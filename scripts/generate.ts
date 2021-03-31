@@ -32,8 +32,6 @@ if (remainingFlags.length) {
 
 const { overwrite } = res.value
 
-Deno.chdir(ROOT)
-
 const downloadOptions: DownloadOptions = {
   overwrite,
   log: console.error,
