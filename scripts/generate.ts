@@ -25,7 +25,8 @@ if (res.tag !== symbols.MAIN_COMMAND) {
 }
 const remainingFlags = res.remaining().rawFlags()
 if (remainingFlags.length) {
-  throw new Error('Unknown flags: ' + remainingFlags.join(', '))
+  console.error('Unknown flags: ', remainingFlags)
+  throw Deno.exit(1)
 }
 
 const { overwrite } = res.value
