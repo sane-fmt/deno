@@ -43,6 +43,6 @@ try {
     log: console.error,
   })
 } catch (error) {
-  console.error(error)
+  console.error('message' in error ? error.message : error)
   throw Deno.exit(1)
 }
