@@ -42,8 +42,21 @@ if (!targetVersions.length) {
   throw Deno.exit(1)
 }
 
-await Promise.all(
-  res.remaining().rawValues()
-    .map(version => new Artifact(version))
-    .map(artifact => artifact.runDownloader(downloadOptions)),
+const results = await Promise.all(
+  targetVersions.map(version => {
+    const artifact = new Artifact(version)
+    return artifact.runDownloader(downloadOptions).then(
+      () => true,
+      error => {
+        console.error(`${version}: ${error}`)
+        return false
+      },
+    )
+  }),
 )
+
+const errorCount = results.filter(success => !success).length
+if (errorCount) {
+  console.error(`${errorCount} errors occurred.`)
+  throw Deno.exit(1)
+}
