@@ -35,6 +35,12 @@ const downloadOptions: DownloadOptions = {
   log: console.error,
 }
 
+const targetVersions = res.remaining().rawValues()
+if (!targetVersions.length) {
+  console.error(`missing target targetVersions`)
+  throw Deno.exit(1)
+}
+
 await Promise.all(
   res.remaining().rawValues()
     .map(version => new Artifact(version))
