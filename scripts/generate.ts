@@ -1,8 +1,5 @@
 import { args, flags, symbols } from './lib/args.ts'
 import { Artifact, DownloadOptions } from './lib/artifacts.ts'
-import download from './lib/download.ts'
-import { wasiFileUrl } from './lib/urls.ts'
-import ROOT from './lib/workspace.ts'
 
 const parser = args
   .with(flags.EarlyExitFlag('help', {
