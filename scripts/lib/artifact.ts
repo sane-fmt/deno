@@ -1,4 +1,3 @@
-import { exists } from './std/fs.ts'
 import { join } from './std/path.ts'
 import download from './download.ts'
 import { wasiFileUrl } from './urls.ts'
@@ -12,7 +11,17 @@ export class Artifact<Version extends string> {
   public readonly path = join(ROOT, 'artifacts', this.name)
 
   public exists() {
-    return exists(this.path)
+    return Deno.lstat(this.path).then(
+      stats => {
+        if (stats.isFile) return true
+        console.error(stats)
+        throw new Error(`${this.path} is not a file`)
+      },
+      error => {
+        if (error instanceof Deno.errors.NotFound) return true
+        throw error
+      },
+    )
   }
 
   public async forceDownload() {
