@@ -38,7 +38,7 @@ const downloadOptions: DownloadOptions = {
 
 const targetVersions = res.remaining().rawValues()
 if (!targetVersions.length) {
-  console.error(`missing target targetVersions`)
+  console.error(`missing targets`)
   throw Deno.exit(1)
 }
 
