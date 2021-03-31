@@ -32,20 +32,19 @@ export class Artifact<Version extends string> {
 
   public async runDownloader(options: DownloadOptions) {
     const { overwrite, log } = options
-    log(this.version)
-    log('  source:', this.url)
-    log('  target:', this.path)
+    log('source:', this.url)
+    log('target:', this.path)
 
     if (overwrite) {
       await this.forceDownload()
-      log(`downloaded ${this.version}`)
+      log('done.')
       return
     }
 
     log(
       ({
-        AlreadyExist: `${this.version} already exists locally`,
-        Downloaded: `downloaded ${this.version}`,
+        AlreadyExist: 'already exists.',
+        Downloaded: 'done.',
       })[await this.downloadOnce()],
     )
   }
