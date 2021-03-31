@@ -1,6 +1,6 @@
 #! /usr/bin/env -S deno run --unstable --allow-all
 import { args, flags, symbols } from './lib/args.ts'
-import { Artifact } from './lib/artifacts.ts'
+import { Artifact } from './lib/artifact.ts'
 
 const parser = args
   .with(flags.EarlyExitFlag('help', {
