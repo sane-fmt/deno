@@ -49,7 +49,9 @@ try {
     overwrite,
     log: console.error,
   })
-  if (!noCodeGen) {
+  if (noCodeGen) {
+    console.error('code generation is skipped.')
+  } else {
     await generator.runGenerator({
       log: console.error,
     })
