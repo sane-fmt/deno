@@ -19,6 +19,9 @@ const parser = args
     alias: ['f'],
     describe: 'Overwrite over existing binary',
   }))
+  .with(flags.BinaryFlag('noCodeGen', {
+    describe: 'Skip generating code',
+  }))
 
 const res = parser.parse(Deno.args)
 if (res.tag !== symbols.MAIN_COMMAND) {
@@ -30,7 +33,7 @@ if (remainingFlags.length) {
   throw Deno.exit(1)
 }
 
-const { overwrite } = res.value
+const { overwrite, noCodeGen } = res.value
 
 const [targetVersion, ...remainingValues] = res.remaining().rawValues()
 if (remainingValues.length) {
@@ -46,9 +49,11 @@ try {
     overwrite,
     log: console.error,
   })
-  await generator.runGenerator({
-    log: console.error,
-  })
+  if (!noCodeGen) {
+    await generator.runGenerator({
+      log: console.error,
+    })
+  }
 } catch (error) {
   console.error('message' in error ? error.message : error)
   throw Deno.exit(1)
