@@ -28,6 +28,17 @@ export class CodeGenerator<Version extends string> {
 
     await Deno.writeTextFile(this.path, data)
   }
+
+  public async runGenerator(options: GenerateOptions) {
+    const { log } = options
+    log(`generating ${this.path}...`)
+    await this.generate()
+    log('done.')
+  }
+}
+
+export interface GenerateOptions {
+  readonly log: (...args: unknown[]) => void
 }
 
 export default CodeGenerator

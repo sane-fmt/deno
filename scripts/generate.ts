@@ -1,6 +1,7 @@
 #! /usr/bin/env -S deno run --unstable --allow-all
 import { args, flags, symbols } from './lib/args.ts'
 import { Artifact } from './lib/artifact.ts'
+import { CodeGenerator } from './lib/codegen.ts'
 
 const parser = args
   .with(flags.EarlyExitFlag('help', {
@@ -37,9 +38,15 @@ if (remainingValues.length) {
   throw Deno.exit(1)
 }
 
+const artifact = new Artifact(targetVersion)
+const generator = new CodeGenerator(artifact)
+
 try {
-  await new Artifact(targetVersion).runDownloader({
+  artifact.runDownloader({
     overwrite,
+    log: console.error,
+  })
+  generator.runGenerator({
     log: console.error,
   })
 } catch (error) {
