@@ -42,11 +42,11 @@ const artifact = new Artifact(targetVersion)
 const generator = new CodeGenerator(artifact)
 
 try {
-  artifact.runDownloader({
+  await artifact.runDownloader({
     overwrite,
     log: console.error,
   })
-  generator.runGenerator({
+  await generator.runGenerator({
     log: console.error,
   })
 } catch (error) {
