@@ -1,4 +1,4 @@
-import { Context, ContextOptions } from './deps.ts'
+import { Context, ContextOptions } from './std/wasi.ts'
 
 export type DenoInterface = Readonly<
   Pick<
