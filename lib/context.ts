@@ -12,7 +12,7 @@ export type DenoInterface = Readonly<
 >
 
 export const createContextOptions = (Deno: DenoInterface): ContextOptions => ({
-  args: Deno.args,
+  args: ['sane-fmt', ...Deno.args],
   env: Deno.env.toObject(),
   stdin: Deno.stdin.rid,
   stdout: Deno.stdout.rid,
