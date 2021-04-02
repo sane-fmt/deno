@@ -1,6 +1,6 @@
 # sane-fmt
 
-{DESCRIPTION}
+{DESCRIPTION}.
 
 * Main Repo: [sane-fmt/sane-fmt](https://github.com/sane-fmt/sane-fmt)
   * [Issues](https://github.com/sane-fmt/sane-fmt/issues)
