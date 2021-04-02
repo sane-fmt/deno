@@ -1,7 +1,7 @@
 import { Context, ContextOptions } from './std/wasi.ts'
 import preopens from './preopens.ts'
 
-export type DenoInterface = Readonly<
+export type DenoAPIs = Readonly<
   Pick<
     typeof Deno,
     | 'args'
@@ -14,7 +14,7 @@ export type DenoInterface = Readonly<
 
 export const PREOPENS_ENV_NAME = 'SANE_FMT_DENO_PREOPENS'
 
-export const createContextOptions = async (Deno: DenoInterface): Promise<ContextOptions> => ({
+export const createContextOptions = async (Deno: DenoAPIs): Promise<ContextOptions> => ({
   args: ['sane-fmt', ...Deno.args],
   env: Deno.env.toObject(),
   stdin: Deno.stdin.rid,
