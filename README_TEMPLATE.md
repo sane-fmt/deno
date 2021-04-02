@@ -32,7 +32,7 @@ deno install \
 
 **Environment Variables:**
 
-* `SANE_FMT_DENO_PREOPENS`: A list of preopened directories. Its separator is colon (`:`) on Linux/Unix and semicolon (`;`) in Windows.
+* `SANE_FMT_DENO_PREOPENS`: A list of preopened directories. Its delimiter is colon (`:`) on Linux/Unix and semicolon (`;`) in Windows.
 
 **Usage:**
 
