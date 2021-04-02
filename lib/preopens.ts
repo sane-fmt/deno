@@ -1,4 +1,4 @@
-import { dirname, SEP } from './std/path.ts'
+import { dirname, delimiter } from './std/path.ts'
 import xArgs, { symbols, flags } from './x/args.ts'
 
 /**
@@ -35,7 +35,7 @@ function getTargetFiles(args: readonly string[]) {
  */
 function parsePreopensEnv(env?: string): Record<string, string> {
   if (!env) return {}
-  const entries = env.split(SEP).map(path => [path, path])
+  const entries = env.split(delimiter).map(path => [path, path])
   return Object.fromEntries(entries)
 }
 
