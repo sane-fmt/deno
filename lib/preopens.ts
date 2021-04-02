@@ -10,15 +10,18 @@ import xArgs, { symbols, values, flags } from './x/args.ts'
  *   * an array of names: When filenames and dirnames are necessary
  */
 function getTargetFiles(args: readonly string[]) {
+  const flagAlias = (x: string): flags.FlagDescriptor => ({ alias: [x] })
+  const optionAlias = (x: string): flags.PartialOptionDescriptor<string, null> => ({
+    alias: [x],
+    type: values.Text,
+    default: null,
+  })
+
   const res = xArgs
-    .with(flags.BinaryFlag('help', { alias: ['h'] }))
-    .with(flags.BinaryFlag('version', { alias: ['V'] }))
+    .with(flags.BinaryFlag('help', flagAlias('h')))
+    .with(flags.BinaryFlag('version', flagAlias('V')))
     .with(flags.BinaryFlag('stdio'))
-    .with(flags.PartialOption('include', {
-      alias: ['I'],
-      type: values.Text,
-      default: null,
-    }))
+    .with(flags.PartialOption('include', optionAlias('I')))
     .parse(args)
 
   if (res.tag !== symbols.MAIN_COMMAND) {
