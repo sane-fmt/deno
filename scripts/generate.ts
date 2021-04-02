@@ -1,6 +1,6 @@
 #! /usr/bin/env -S deno run --unstable --allow-all
 import { join } from './lib/std/path.ts'
-import { args, EarlyExitFlag, BinaryFlag, MAIN_COMMAND } from './lib/x/args.ts'
+import { args, EarlyExitFlag, BinaryFlag, PARSE_FAILURE } from './lib/x/args.ts'
 import Artifact from './lib/artifact.ts'
 import CodeGenerator from './lib/codegen.ts'
 import ROOT from './lib/workspace.ts'
@@ -29,8 +29,9 @@ const parser = args
   }))
 
 const res = parser.parse(Deno.args)
-if (res.tag !== MAIN_COMMAND) {
-  throw new Error('Failed to parse CLI arguments')
+if (res.tag === PARSE_FAILURE) {
+  console.error(res.error.toString())
+  throw Deno.exit(1)
 }
 const remainingFlags = res.remaining().rawFlags()
 if (remainingFlags.length) {
