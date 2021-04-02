@@ -1,5 +1,5 @@
 import { dirname, delimiter } from './std/path.ts'
-import xArgs, { symbols, flags } from './x/args.ts'
+import xArgs, { symbols, values, flags } from './x/args.ts'
 
 /**
  * Extract names of files and folders from an array of CLI arguments
@@ -14,6 +14,11 @@ function getTargetFiles(args: readonly string[]) {
     .with(flags.BinaryFlag('help', { alias: ['h'] }))
     .with(flags.BinaryFlag('version', { alias: ['V'] }))
     .with(flags.BinaryFlag('stdio'))
+    .with(flags.PartialOption('include', {
+      alias: ['I'],
+      type: values.Text,
+      default: null,
+    }))
     .parse(args)
 
   if (res.tag !== symbols.MAIN_COMMAND) {
@@ -22,10 +27,11 @@ function getTargetFiles(args: readonly string[]) {
 
   // when the following flags present, sane-fmt won't touch the filesystem,
   // preopens become an unnecessary burden on performance
-  const { help, version, stdio } = res.value
+  const { help, version, stdio, include } = res.value
   if (help || version || stdio) return null
 
-  return res.remaining().rawValues()
+  const result = res.remaining().rawValues()
+  return include ? [...result, include] : result
 }
 
 /**
