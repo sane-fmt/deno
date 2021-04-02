@@ -39,7 +39,7 @@ export async function preopens(args: readonly string[], env?: string): Promise<R
         return stats.isDirectory ? name : dirname(name)
       } catch (error) {
         if (error instanceof Deno.errors.NotFound) {
-          return name
+          return null
         }
         throw error
       }
@@ -47,6 +47,7 @@ export async function preopens(args: readonly string[], env?: string): Promise<R
   )
 
   for (const name of directories) {
+    if (name === null) continue
     preopens[name] = name
   }
 
