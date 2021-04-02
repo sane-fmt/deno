@@ -20,7 +20,8 @@ function getTargetFiles(args: readonly string[]) {
   return res.remaining().rawValues()
 }
 
-function parsePreopensEnv(env = ''): Record<string, string> {
+function parsePreopensEnv(env?: string): Record<string, string> {
+  if (!env) return {}
   const entries = env.split(SEP).map(path => [path, path])
   return Object.fromEntries(entries)
 }
