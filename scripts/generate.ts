@@ -11,6 +11,9 @@ const parser = args
       console.log('DESCRIPTION:')
       console.log('  Download sane-fmt wasi binary and generate related files')
       console.log()
+      console.log('USAGE:')
+      console.log('  ./scripts/generate.ts [OPTIONS] <VERSION>')
+      console.log()
       console.log(parser.help())
       return Deno.exit()
     },
