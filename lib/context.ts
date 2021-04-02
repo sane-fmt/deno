@@ -12,6 +12,8 @@ export type DenoInterface = Readonly<
   >
 >
 
+export const PREOPENS_ENV_NAME = 'SANE_FMT_DENO_PREOPENS'
+
 export const createContextOptions = async (Deno: DenoInterface): Promise<ContextOptions> => ({
   args: ['sane-fmt', ...Deno.args],
   env: Deno.env.toObject(),
@@ -19,7 +21,7 @@ export const createContextOptions = async (Deno: DenoInterface): Promise<Context
   stdout: Deno.stdout.rid,
   stderr: Deno.stderr.rid,
   exitOnReturn: true,
-  preopens: await preopens(Deno.args),
+  preopens: await preopens(Deno.args, Deno.env.get(PREOPENS_ENV_NAME)),
 })
 
 export const createContext = async () => new Context(await createContextOptions(Deno))

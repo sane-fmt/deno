@@ -1,4 +1,4 @@
-import { dirname } from './std/path.ts'
+import { dirname, SEP } from './std/path.ts'
 import xArgs, { symbols, flags } from './x/args.ts'
 
 function getTargetFiles(args: readonly string[]) {
@@ -20,8 +20,13 @@ function getTargetFiles(args: readonly string[]) {
   return res.remaining().rawValues()
 }
 
-export async function preopens(args: readonly string[]): Promise<Record<string, string>> {
-  const preopens: Record<string, string> = {}
+function parsePreopensEnv(env = ''): Record<string, string> {
+  const entries = env.split(SEP).map(path => [path, path])
+  return Object.fromEntries(entries)
+}
+
+export async function preopens(args: readonly string[], env?: string): Promise<Record<string, string>> {
+  const preopens: Record<string, string> = parsePreopensEnv(env)
 
   const targetFiles = getTargetFiles(args)
   if (!targetFiles) return preopens
