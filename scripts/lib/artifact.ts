@@ -1,5 +1,5 @@
 import { join } from './std/path.ts'
-import download from './download.ts'
+import download from './x/download.ts'
 import { wasiFileUrl } from './urls.ts'
 import ROOT from './workspace.ts'
 

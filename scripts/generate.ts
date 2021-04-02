@@ -1,6 +1,6 @@
 #! /usr/bin/env -S deno run --unstable --allow-all
 import { join } from './lib/std/path.ts'
-import { args, EarlyExitFlag, BinaryFlag, MAIN_COMMAND } from './lib/args.ts'
+import { args, EarlyExitFlag, BinaryFlag, MAIN_COMMAND } from './lib/x/args.ts'
 import Artifact from './lib/artifact.ts'
 import CodeGenerator from './lib/codegen.ts'
 import ROOT from './lib/workspace.ts'
