@@ -5,7 +5,12 @@ import ROOT from './workspace.ts'
 
 export const code = (base64: string): string =>
   [
+    '/// <reference types="./base64.d.ts" />',
     '// sane-fmt-ignore',
+    '/**',
+    ' * Base64 representation of sane-fmt wasi executable',
+    ' * @type {string}',
+    ' */',
     `export const base64 = '${base64}'`,
     'export default base64',
     '',
@@ -18,7 +23,7 @@ export class CodeGenerator<Version extends string> {
     this.#artifact = artifact
   }
 
-  public readonly path = join(ROOT, 'lib', 'base64.ts')
+  public readonly path = join(ROOT, 'lib', 'base64.js')
 
   public async generate() {
     const data = await Deno

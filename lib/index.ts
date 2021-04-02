@@ -1,4 +1,4 @@
-export * from './base64.ts'
+export * from './base64.js'
 export * from './context.ts'
 export * from './preopens.ts'
 export * from './run.ts'
