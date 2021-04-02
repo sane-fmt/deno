@@ -66,6 +66,6 @@ try {
     )
   }
 } catch (error) {
-  console.error('message' in error ? error.message : error)
+  console.error(error instanceof Error ? error.toString() : error)
   throw Deno.exit(1)
 }
