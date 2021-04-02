@@ -71,7 +71,7 @@ try {
     const readmeContent = applyTemplate(readmeTemplate, {
       VERSION: targetVersion,
       DESCRIPTION: description,
-      CLI_USAGE: await getCliUsage('-h'),
+      CLI_USAGE: await getCliUsage('--help'),
       DENO_VERSION: Deno.version.deno,
       TYPESCRIPT_VERSION: Deno.version.typescript,
       V8_VERSION: Deno.version.v8,

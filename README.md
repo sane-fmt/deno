@@ -44,22 +44,41 @@ USAGE:
     sane-fmt [FLAGS] [OPTIONS] [files]...
 
 FLAGS:
-    -h, --help           Prints help information
-        --hide-passed    Do not log passed filenames
-        --stdio          Reads unformatted code from standard input, prints formatted code to standard output, then
-                         exits
-    -V, --version        Prints version information
-    -w, --write          Whether to write or check
+    -h, --help
+            Prints help information
+
+        --hide-passed
+            Do not log passed filenames
+
+        --stdio
+            Reads unformatted code from standard input, prints formatted code to standard output, then exits
+
+    -V, --version
+            Prints version information
+
+    -w, --write
+            Whether to write or check
+
 
 OPTIONS:
-        --color <color>              When to use terminal color [default: auto]  [possible values: auto, never, always]
-        --details <details>          File diff detail [default: name]  [possible values: count, name, diff]
-    -I, --include <list>             Files whose contents contain paths to target files (`-` means stdin, other strings
-                                     mean text file)
-        --log-format <log-format>    Format of log messages [default: human]  [possible values: human, github-actions]
+        --color <color>
+            When to use terminal color [default: auto]  [possible values: auto, never, always]
+
+        --details <details>
+            File diff detail [default: name]  [possible values: count, name, diff]
+
+    -I, --include <list>
+            Files whose contents contain paths to target files (`-` means stdin, other strings mean text file)
+
+        --log-format <log-format>
+            Format of log messages [default: human]  [possible values: human, github-actions]
+
 
 ARGS:
-    <files>...    Files to process
+    <files>...
+            Files to process
+
+            If none are provided, a default set of files will be assumed
 
 ```
 
