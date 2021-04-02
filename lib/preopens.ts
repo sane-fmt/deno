@@ -51,7 +51,7 @@ export async function preopens(args: readonly string[], env?: string): Promise<R
   const targetFiles = getTargetFiles(args)
   if (!targetFiles) return preopens
 
-  if (!targetFiles.length) return { '.': '.' }
+  if (!targetFiles.length) return { '.': '.', ...preopens }
 
   const directories = await Promise.all(
     targetFiles.map(async name => {
