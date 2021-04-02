@@ -1,8 +1,10 @@
 #! /usr/bin/env -S deno run --unstable --allow-all
 import { join } from './lib/std/path.ts'
-import { args, EarlyExitFlag, BinaryFlag, PARSE_FAILURE } from './lib/x/args.ts'
+import { args, EarlyExitFlag, BinaryFlag, Option, Text, PARSE_FAILURE } from './lib/x/args.ts'
 import Artifact from './lib/artifact.ts'
+import getCliUsage from './lib/cli-usage.ts'
 import CodeGenerator from './lib/codegen.ts'
+import applyTemplate from './lib/template.ts'
 import ROOT from './lib/workspace.ts'
 
 const parser = args
@@ -27,6 +29,10 @@ const parser = args
   .with(BinaryFlag('noCodeGen', {
     describe: 'Skip generating code',
   }))
+  .with(Option('description', {
+    type: Text,
+    describe: 'Description of sane-fmt',
+  }))
 
 const res = parser.parse(Deno.args)
 if (res.tag === PARSE_FAILURE) {
@@ -39,7 +45,7 @@ if (remainingFlags.length) {
   throw Deno.exit(1)
 }
 
-const { overwrite, noCodeGen } = res.value
+const { overwrite, noCodeGen, description } = res.value
 
 const [targetVersion, ...remainingValues] = res.remaining().rawValues()
 if (remainingValues.length) {
@@ -61,9 +67,19 @@ try {
     await generator.runGenerator({
       log: console.error,
     })
-    await Deno.copyFile(
-      join(ROOT, 'README.md'),
-      join(ROOT, 'lib', 'README.md'),
+    const readmeTemplate = await Deno.readTextFile(join(ROOT, 'README_TEMPLATE.md'))
+    const readmeContent = applyTemplate(readmeTemplate, {
+      VERSION: targetVersion,
+      DESCRIPTION: description,
+      CLI_USAGE: await getCliUsage('-h'),
+      DENO_VERSION: Deno.version.deno,
+      TYPESCRIPT_VERSION: Deno.version.typescript,
+      V8_VERSION: Deno.version.v8,
+    })
+    await Promise.all(
+      ['README.md', 'lib/README.md']
+        .map(path => join(ROOT, path))
+        .map(path => Deno.writeTextFile(path, readmeContent)),
     )
   }
 } catch (error) {
