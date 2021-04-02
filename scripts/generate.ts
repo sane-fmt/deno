@@ -1,7 +1,9 @@
 #! /usr/bin/env -S deno run --unstable --allow-all
+import { join } from './lib/std/path.ts'
 import { args, flags, symbols } from './lib/args.ts'
 import Artifact from './lib/artifact.ts'
 import CodeGenerator from './lib/codegen.ts'
+import ROOT from './lib/workspace.ts'
 
 const parser = args
   .with(flags.EarlyExitFlag('help', {
@@ -58,6 +60,10 @@ try {
     await generator.runGenerator({
       log: console.error,
     })
+    await Deno.copyFile(
+      join(ROOT, 'README.md'),
+      join(ROOT, 'lib', 'README.md'),
+    )
   }
 } catch (error) {
   console.error('message' in error ? error.message : error)
