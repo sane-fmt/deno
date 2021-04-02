@@ -1,12 +1,12 @@
 #! /usr/bin/env -S deno run --unstable --allow-all
 import { join } from './lib/std/path.ts'
-import { args, flags, symbols } from './lib/args.ts'
+import { args, EarlyExitFlag, BinaryFlag, MAIN_COMMAND } from './lib/args.ts'
 import Artifact from './lib/artifact.ts'
 import CodeGenerator from './lib/codegen.ts'
 import ROOT from './lib/workspace.ts'
 
 const parser = args
-  .with(flags.EarlyExitFlag('help', {
+  .with(EarlyExitFlag('help', {
     alias: ['h'],
     describe: 'Show help',
     exit() {
@@ -20,16 +20,16 @@ const parser = args
       return Deno.exit()
     },
   }))
-  .with(flags.BinaryFlag('overwrite', {
+  .with(BinaryFlag('overwrite', {
     alias: ['f'],
     describe: 'Overwrite over existing binary',
   }))
-  .with(flags.BinaryFlag('noCodeGen', {
+  .with(BinaryFlag('noCodeGen', {
     describe: 'Skip generating code',
   }))
 
 const res = parser.parse(Deno.args)
-if (res.tag !== symbols.MAIN_COMMAND) {
+if (res.tag !== MAIN_COMMAND) {
   throw new Error('Failed to parse CLI arguments')
 }
 const remainingFlags = res.remaining().rawFlags()

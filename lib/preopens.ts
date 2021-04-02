@@ -1,5 +1,12 @@
 import { dirname, delimiter } from './std/path.ts'
-import xArgs, { symbols, values, flags } from './x/args.ts'
+import xArgs, {
+  FlagDescriptor,
+  PartialOptionDescriptor,
+  BinaryFlag,
+  PartialOption,
+  Text,
+  MAIN_COMMAND,
+} from './x/args.ts'
 
 /**
  * Extract names of files and folders from an array of CLI arguments
@@ -10,21 +17,21 @@ import xArgs, { symbols, values, flags } from './x/args.ts'
  *   * an array of names: When filenames and dirnames are necessary
  */
 function getTargetFiles(args: readonly string[]) {
-  const flagAlias = (x: string): flags.FlagDescriptor => ({ alias: [x] })
-  const optionAlias = (x: string): flags.PartialOptionDescriptor<string, null> => ({
+  const flagAlias = (x: string): FlagDescriptor => ({ alias: [x] })
+  const optionAlias = (x: string): PartialOptionDescriptor<string, null> => ({
     alias: [x],
-    type: values.Text,
+    type: Text,
     default: null,
   })
 
   const res = xArgs
-    .with(flags.BinaryFlag('help', flagAlias('h')))
-    .with(flags.BinaryFlag('version', flagAlias('V')))
-    .with(flags.BinaryFlag('stdio'))
-    .with(flags.PartialOption('include', optionAlias('I')))
+    .with(BinaryFlag('help', flagAlias('h')))
+    .with(BinaryFlag('version', flagAlias('V')))
+    .with(BinaryFlag('stdio'))
+    .with(PartialOption('include', optionAlias('I')))
     .parse(args)
 
-  if (res.tag !== symbols.MAIN_COMMAND) {
+  if (res.tag !== MAIN_COMMAND) {
     throw new Error('Something goes wrong.')
   }
 
