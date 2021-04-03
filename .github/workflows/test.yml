@@ -26,7 +26,7 @@ jobs:
         continue-on-error: true
         uses: actions/cache@v2.1.4
         with:
-          path: ${{ matrix.cache }}
+          path: ${{ matrix.env.cache }}
           key: deno-${{ runner.os }}-${{ hashFiles('{lib,utils}/{std,x}/**/*.ts') }}
           restore-keys: |
             deno-${{ runner.os }}-${{ hashFiles('{lib,utils}/{std,x}/**/*.ts') }}
