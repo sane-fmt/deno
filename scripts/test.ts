@@ -26,3 +26,8 @@ Deno.test('preopens([<dirname>]) returns only <dirname>', async () => {
   await initTestEnvironment(root)
   assertEquals(await preopens(['dir/dir']), { 'dir/dir': 'dir/dir' })
 })
+
+Deno.test('preopens ignores names that do not exist', async () => {
+  await initTestEnvironment(root)
+  assertEquals(await preopens(['dir/file.ts', 'dir/not-exist']), { 'dir': 'dir' })
+})
