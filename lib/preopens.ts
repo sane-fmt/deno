@@ -1,12 +1,5 @@
 import { dirname, delimiter } from './std/path.ts'
-import xArgs, {
-  FlagDescriptor,
-  PartialOptionDescriptor,
-  BinaryFlag,
-  PartialOption,
-  Text,
-  MAIN_COMMAND,
-} from './x/args.ts'
+import xArgs, { FlagDescriptor, BinaryFlag, MAIN_COMMAND } from './x/args.ts'
 
 /**
  * Extract names of files and folders from an array of CLI arguments
