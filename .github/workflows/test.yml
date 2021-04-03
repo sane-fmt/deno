@@ -14,7 +14,7 @@ jobs:
         os:
           - ubuntu-latest
           - macos-latest
-          # - windows-latest (there's an issue regarding delimiter which is related to Deno.build.os)
+          - windows-latest
 
     steps:
       - uses: actions/checkout@v2
