@@ -28,12 +28,10 @@ Deno.test('PREOPENS_ENV_NAME', () => {
   assertStrictEquals(PREOPENS_ENV_NAME, 'SANE_FMT_DENO_PREOPENS')
 })
 
-const actualPreopens = (posixPaths: string[], env?: string) =>
-  preopens(posixPaths.map(path => path.replaceAll('/', SEP)), env)
+const transformPosixPath = (path: string) => path.replaceAll('/', SEP)
+const actualPreopens = (posixPaths: string[], env?: string) => preopens(posixPaths.map(transformPosixPath), env)
 const expectedPreopens = (...posixPaths: string[]) =>
-  Object.fromEntries(
-    posixPaths.map(path => path.replaceAll('/', SEP)).map(path => [path, path]),
-  )
+  Object.fromEntries(posixPaths.map(transformPosixPath).map(path => [path, path]))
 
 Deno.test('preopens([]) returns only current directory', async () => {
   assertEquals(await actualPreopens([]), expectedPreopens('.'))
