@@ -11,20 +11,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
+        - os: ubuntu-latest
+          cache: ~/.cache/deno
+        - os: macos-latest
+          cache: ~/Library/Caches/deno
+        - os: windows-latest
+          cache: ~/.deno
 
     steps:
       - uses: actions/checkout@v2
       - name: Cache
         timeout-minutes: 1
         continue-on-error: true
-        if: matrix.os == 'ubuntu-latest'
         uses: actions/cache@v2.1.4
         with:
-          path: ~/.cache/deno
+          path: ${{ matrix.cache }}
           key: deno-${{ runner.os }}-${{ hashFiles('{lib,utils}/{std,x}/**/*.ts') }}
           restore-keys: |
             deno-${{ runner.os }}-${{ hashFiles('{lib,utils}/{std,x}/**/*.ts') }}
@@ -37,11 +38,12 @@ jobs:
       - name: Test
         run: deno test --unstable --allow-all scripts/test.ts
       - name: Prepare for uploading deno cache as artifacts
-        if: matrix.os == 'ubuntu-latest'
-        run: cp -r ~/.cache/deno deno-cache.tmp
+        env:
+          SOURCE: ${{ matrix.cache }}
+          TARGET: deno-cache.${{ matrix.os }}.tmp
+        run: cp -r "$SOURCE" "$TARGET"
       - name: Upload deno cache as artifacts
-        if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v2.2.2
         with:
-          name: deno-cache
-          path: deno-cache.tmp
+          name: deno-cache.${{ matrix.os }}
+          path: deno-cache.${{ matrix.os }}.tmp
