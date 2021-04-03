@@ -1,10 +1,12 @@
 import { dirname } from './std/path.ts'
-import { getDirname } from './x/cjs.ts'
 import { pipe } from './x/compose.ts'
+import { getAbsolutePath, assertAbsolute } from './file-url.ts'
 
 export const ROOT = pipe(
   import.meta.url,
-  getDirname,
+  assertAbsolute,
+  getAbsolutePath,
+  dirname,
   dirname,
 )
 
