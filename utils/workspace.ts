@@ -1,4 +1,4 @@
-import { join, dirname } from './std/path.ts'
+import { dirname } from './std/path.ts'
 import { getDirname } from './x/cjs.ts'
 import { pipe } from './x/compose.ts'
 
