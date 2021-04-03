@@ -31,3 +31,19 @@ Deno.test('preopens ignores names that do not exist', async () => {
   await initTestEnvironment(root)
   assertEquals(await preopens(['dir/file.ts', 'dir/not-exist']), { 'dir': 'dir' })
 })
+
+Deno.test('preopens(--help|-h|--version|-V|--stdio) returns an empty object', async () => {
+  const flags = ['--help', '-h', '--version', '-V', '--stdio']
+  const entry = <Value>(flag: string, value: Value) => ({ flag, value })
+  const actual = await Promise.all(flags.map(async flag => entry(flag, await preopens([flag]))))
+  const expected = flags.map(flag => entry(flag, {}))
+  assertEquals(actual, expected)
+})
+
+Deno.test('preopens(--help|-h|--version|-V|--stdio) returns an empty object regardless of other targets', async () => {
+  const flags = ['--help', '-h', '--version', '-V', '--stdio']
+  const entry = <Value>(flag: string, value: Value) => ({ flag, value })
+  const actual = await Promise.all(flags.map(async flag => entry(flag, await preopens(['foo', flag, 'bar']))))
+  const expected = flags.map(flag => entry(flag, {}))
+  assertEquals(actual, expected)
+})
