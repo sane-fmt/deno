@@ -18,7 +18,7 @@ export class Artifact<Version extends string> {
         throw new Error(`${this.path} is not a file`)
       },
       error => {
-        if (error instanceof Deno.errors.NotFound) return true
+        if (error instanceof Deno.errors.NotFound) return false
         throw error
       },
     )
