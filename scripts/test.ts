@@ -32,7 +32,7 @@ const actualPreopens = (posixPaths: string[], env?: string) =>
   preopens(posixPaths.map(path => path.replaceAll('/', SEP)), env)
 const expectedPreopens = (...posixPaths: string[]) =>
   Object.fromEntries(
-    posixPaths.map(path => [path, path]),
+    posixPaths.map(path => path.replaceAll('/', SEP)).map(path => [path, path]),
   )
 
 Deno.test('preopens([]) returns only current directory', async () => {
