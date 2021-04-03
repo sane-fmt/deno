@@ -136,7 +136,7 @@ Deno.test('use sane-fmt with --include and $SANE_FMT_DENO_PREOPENS', async () =>
     },
   })
   assertStrictEquals(output.status.success, false)
-  assertNotStrictEquals(output.stderr, '')
+  assertStrictEquals(output.stderr, 'Error: "There are 1 unformatted files"')
 })
 
 Deno.test('use sane-fmt with --stdio', async () => {
