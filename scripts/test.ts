@@ -32,6 +32,11 @@ Deno.test('preopens ignores names that do not exist', async () => {
   assertEquals(await preopens(['dir/file.ts', 'dir/not-exist']), { 'dir': 'dir' })
 })
 
+Deno.test('preopens([--include <filename>]) returns <filename>', async () => {
+  await initTestEnvironment(root)
+  assertEquals(await preopens(['--include', 'include/include.txt']), { 'include': 'include' })
+})
+
 Deno.test('preopens([], <env>) returns <env> and current directory', async () => {
   await initTestEnvironment(root)
   const actual = await preopens([], 'foo:bar:baz')
