@@ -1,11 +1,11 @@
 #! /usr/bin/env -S deno run --unstable --allow-all
-import { join } from './lib/std/path.ts'
-import { args, EarlyExitFlag, BinaryFlag, Option, Text, PARSE_FAILURE } from './lib/x/args.ts'
-import Artifact from './lib/artifact.ts'
-import getCliUsage from './lib/cli-usage.ts'
-import CodeGenerator from './lib/codegen.ts'
-import applyTemplate from './lib/template.ts'
-import ROOT from './lib/workspace.ts'
+import { join } from '../utils/std/path.ts'
+import { args, EarlyExitFlag, BinaryFlag, Option, Text, PARSE_FAILURE } from '../utils/x/args.ts'
+import Artifact from '../utils/artifact.ts'
+import getCliUsage from '../utils/cli-usage.ts'
+import CodeGenerator from '../utils/codegen.ts'
+import applyTemplate from '../utils/template.ts'
+import ROOT from '../utils/workspace.ts'
 
 const parser = args
   .with(EarlyExitFlag('help', {

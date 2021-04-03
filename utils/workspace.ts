@@ -6,7 +6,6 @@ export const ROOT = pipe(
   import.meta.url,
   getDirname,
   dirname,
-  dirname,
 )
 
 export default ROOT
