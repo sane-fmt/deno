@@ -42,7 +42,9 @@ jobs:
         env:
           SOURCE: ${{ matrix.env.cache }}
           TARGET: deno-cache.${{ matrix.env.os }}.tmp
-        run: cp -r "$SOURCE" "$TARGET"
+        run: |
+          eval "source=$SOURCE"
+          cp -r "$source" "$TARGET"
       - name: Upload deno cache as artifacts
         uses: actions/upload-artifact@v2.2.2
         with:
