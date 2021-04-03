@@ -6,17 +6,18 @@ on:
 
 jobs:
   test:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.env.os }}
 
     strategy:
       fail-fast: false
       matrix:
-        - os: ubuntu-latest
-          cache: ~/.cache/deno
-        - os: macos-latest
-          cache: ~/Library/Caches/deno
-        - os: windows-latest
-          cache: ~/.deno
+        env:
+          - os: ubuntu-latest
+            cache: ~/.cache/deno
+          - os: macos-latest
+            cache: ~/Library/Caches/deno
+          - os: windows-latest
+            cache: ~/.deno
 
     steps:
       - uses: actions/checkout@v2
@@ -39,11 +40,11 @@ jobs:
         run: deno test --unstable --allow-all scripts/test.ts
       - name: Prepare for uploading deno cache as artifacts
         env:
-          SOURCE: ${{ matrix.cache }}
-          TARGET: deno-cache.${{ matrix.os }}.tmp
+          SOURCE: ${{ matrix.env.cache }}
+          TARGET: deno-cache.${{ matrix.env.os }}.tmp
         run: cp -r "$SOURCE" "$TARGET"
       - name: Upload deno cache as artifacts
         uses: actions/upload-artifact@v2.2.2
         with:
-          name: deno-cache.${{ matrix.os }}
-          path: deno-cache.${{ matrix.os }}.tmp
+          name: deno-cache.${{ matrix.env.os }}
+          path: deno-cache.${{ matrix.env.os }}.tmp
