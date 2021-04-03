@@ -18,17 +18,11 @@ import xArgs, {
  */
 function getTargetFiles(args: readonly string[]) {
   const flagAlias = (x: string): FlagDescriptor => ({ alias: [x] })
-  const optionAlias = (x: string): PartialOptionDescriptor<string, null> => ({
-    alias: [x],
-    type: Text,
-    default: null,
-  })
 
   const res = xArgs
     .with(BinaryFlag('help', flagAlias('h')))
     .with(BinaryFlag('version', flagAlias('V')))
     .with(BinaryFlag('stdio'))
-    .with(PartialOption('include', optionAlias('I')))
     .parse(args)
 
   if (res.tag !== MAIN_COMMAND) {
@@ -37,11 +31,10 @@ function getTargetFiles(args: readonly string[]) {
 
   // when the following flags present, sane-fmt won't touch the filesystem,
   // preopens become an unnecessary burden on performance
-  const { help, version, stdio, include } = res.value
+  const { help, version, stdio } = res.value
   if (help || version || stdio) return null
 
-  const result = res.remaining().rawValues()
-  return include ? [...result, include] : result
+  return res.remaining().rawValues()
 }
 
 /**
