@@ -1,7 +1,7 @@
 #! /usr/bin/env -S deno test --unstable --allow-all
 import { assertStrictEquals, assertEquals, assertNotStrictEquals } from '../utils/std/testing/asserts.ts'
 import preopensEnv from '../utils/path-like-env.ts'
-import SANE_FMT_CMD from '../utils/sane-fmt-cmd.ts'
+import RUN_SANE_FMT from '../utils/sane-fmt-cmd.ts'
 import initTestEnvironment from '../utils/test-env.ts'
 import { PREOPENS_ENV_NAME, preopens } from '../index.ts'
 
@@ -87,7 +87,7 @@ interface RunSaneFmtOptions {
 async function runSaneFmt(args: readonly string[], options: RunSaneFmtOptions = {}) {
   const { env, stdin } = options
   const process = Deno.run({
-    cmd: [...SANE_FMT_CMD, ...args],
+    cmd: [...RUN_SANE_FMT, ...args],
     env: Object.assign(Deno.env.toObject(), env),
     stdin: stdin === undefined ? 'null' : 'piped',
     stdout: 'piped',
