@@ -1,5 +1,6 @@
 #! /usr/bin/env -S deno test --unstable --allow-all
-import { assertStrictEquals, assertEquals } from '../utils/std/testing/asserts.ts'
+import { assertStrictEquals, assertEquals, assertNotStrictEquals } from '../utils/std/testing/asserts.ts'
+import SANE_FMT_CMD from '../utils/sane-fmt-cmd.ts'
 import initTestEnvironment from '../utils/test-env.ts'
 import { PREOPENS_ENV_NAME, preopens } from '../index.ts'
 
@@ -74,4 +75,81 @@ Deno.test('preopens(--help|-h|--version|-V|--stdio, <env>) respects <env>', asyn
   const actual = await Promise.all(flags.map(async flag => entry(flag, await preopens([flag], 'foo:bar:baz'))))
   const expected = flags.map(flag => entry(flag, { 'foo': 'foo', 'bar': 'bar', 'baz': 'baz' }))
   assertEquals(actual, expected)
+})
+
+interface RunSaneFmtOptions {
+  readonly env?: Record<string, string>
+  readonly stdin?: string
+}
+
+async function runSaneFmt(args: readonly string[], options: RunSaneFmtOptions = {}) {
+  const { env, stdin } = options
+  const process = Deno.run({
+    cmd: [...SANE_FMT_CMD, ...args],
+    env: Object.assign(Deno.env.toObject(), env),
+    stdin: stdin === undefined ? 'null' : 'piped',
+    stdout: 'piped',
+    stderr: 'piped',
+  })
+  if (stdin !== undefined) {
+    const textEncoder = new TextEncoder()
+    await process.stdin!.write(textEncoder.encode(stdin))
+    process.stdin!.close()
+  }
+  const textDecoder = new TextDecoder()
+  const status = await process.status()
+  const stdout = textDecoder.decode(await process.output()).trim()
+  const stderr = textDecoder.decode(await process.stderrOutput()).trim()
+  process.close()
+  return { status, stdout, stderr }
+}
+
+Deno.test('use sane-fmt to check correctly formatted files', async () => {
+  await initTestEnvironment(root)
+  const output = await runSaneFmt(['correct-formatting'])
+  assertStrictEquals(output.status.success, true)
+  assertStrictEquals(output.stderr, '')
+})
+
+Deno.test('use sane-fmt to check incorrectly formatted files', async () => {
+  await initTestEnvironment(root)
+  const output = await runSaneFmt(['incorrect-formatting'])
+  assertStrictEquals(output.status.success, false)
+  assertNotStrictEquals(output.stderr, '')
+})
+
+Deno.test('use sane-fmt to reformatted incorrectly formatted files', async () => {
+  await initTestEnvironment(root)
+  const writeOutput = await runSaneFmt(['--write', 'incorrect-formatting'])
+  assertStrictEquals(writeOutput.status.success, true)
+  assertStrictEquals(writeOutput.stderr, '')
+  const checkOutput = await runSaneFmt(['incorrect-formatting'])
+  assertStrictEquals(checkOutput.status.success, true)
+  assertStrictEquals(checkOutput.stderr, '')
+})
+
+Deno.test('use sane-fmt with --include and $SANE_FMT_DENO_PREOPENS', async () => {
+  await initTestEnvironment(root)
+  const output = await runSaneFmt(['--include=include/include.txt'], {
+    env: {
+      SANE_FMT_DENO_PREOPENS: 'include:correct-formatting:incorrect-formatting',
+    },
+  })
+  assertStrictEquals(output.status.success, false)
+  assertNotStrictEquals(output.stderr, '')
+})
+
+Deno.test('use sane-fmt with --stdio', async () => {
+  await initTestEnvironment(root)
+  const input = 'export const hello = "world";'
+  const output1 = await runSaneFmt(['--stdio'], { stdin: input })
+  assertStrictEquals(output1.status.success, true)
+  assertNotStrictEquals(output1.stdout, '')
+  assertNotStrictEquals(output1.stdout, input)
+  assertStrictEquals(output1.stderr, '')
+  const output2 = await runSaneFmt(['--stdio'], { stdin: output1.stdout })
+  assertStrictEquals(output2.status.success, true)
+  assertNotStrictEquals(output2.stdout, '')
+  assertStrictEquals(output2.stdout, output1.stdout)
+  assertStrictEquals(output2.stderr, '')
 })

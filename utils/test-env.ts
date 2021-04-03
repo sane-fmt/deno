@@ -9,9 +9,24 @@ export async function initTestEnvironment(...root: string[]) {
     'dir/file.ts': '',
     'file.ts': '',
     'include/include.txt': [
-      'dir/dir',
-      'dir/file.ts',
+      'correct-formatting',
+      'incorrect-formatting',
     ].join('\n'),
+    'correct-formatting': {
+      'index.ts': [
+        'export function hello(): string {',
+        "  return 'world'",
+        '}',
+        '',
+      ].join('\n'),
+    },
+    'incorrect-formatting': {
+      'index.ts': [
+        'export function hello () : string{',
+        'return "world";',
+        '}',
+      ].join('\n'),
+    },
   }, ...root)
 }
 
