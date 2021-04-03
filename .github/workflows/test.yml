@@ -21,6 +21,7 @@ jobs:
       - name: Cache
         timeout-minutes: 1
         continue-on-error: true
+        if: matrix.os == 'ubuntu-latest'
         uses: actions/cache@v2.1.4
         with:
           path: ~/.cache/deno
@@ -36,8 +37,10 @@ jobs:
       - name: Test
         run: deno test --unstable --allow-all scripts/test.ts
       - name: Prepare for uploading deno cache as artifacts
+        if: matrix.os == 'ubuntu-latest'
         run: cp -r ~/.cache/deno deno-cache.tmp
       - name: Upload deno cache as artifacts
+        if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v2.2.2
         with:
           name: deno-cache
