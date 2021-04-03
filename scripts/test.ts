@@ -139,6 +139,30 @@ Deno.test('use sane-fmt with --include and $SANE_FMT_DENO_PREOPENS', async () =>
   assertStrictEquals(output.stderr, 'Error: "There are 1 unformatted files"')
 })
 
+Deno.test('use sane-fmt with --include - and $SANE_FMT_DENO_PREOPENS', async () => {
+  await initTestEnvironment(root)
+  const output = await runSaneFmt(['--include', '-'], {
+    env: {
+      SANE_FMT_DENO_PREOPENS: 'correct-formatting',
+    },
+    stdin: 'correct-formatting\n',
+  })
+  assertStrictEquals(output.status.success, true)
+  assertStrictEquals(output.stderr, '')
+})
+
+Deno.test('use sane-fmt with --include=- and $SANE_FMT_DENO_PREOPENS', async () => {
+  await initTestEnvironment(root)
+  const output = await runSaneFmt(['--include=-'], {
+    env: {
+      SANE_FMT_DENO_PREOPENS: 'correct-formatting',
+    },
+    stdin: 'correct-formatting\n',
+  })
+  assertStrictEquals(output.status.success, true)
+  assertStrictEquals(output.stderr, '')
+})
+
 Deno.test('use sane-fmt with --stdio', async () => {
   await initTestEnvironment(root)
   const input = 'export const hello = "world";'
