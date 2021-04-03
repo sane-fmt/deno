@@ -73,7 +73,7 @@ Deno.test('preopens(--help|-h|--version|-V|--stdio, <env>) respects <env>', asyn
   await Promise.all(['foo', 'bar', 'baz'].map(suffix => initTestEnvironment(root, suffix)))
   const flags = ['--help', '-h', '--version', '-V', '--stdio']
   const entry = <Value>(flag: string, value: Value) => ({ flag, value })
-  const actual = await Promise.all(flags.map(async flag => entry(flag, await preopens([flag], 'foo:bar:baz'))))
+  const actual = await Promise.all(flags.map(async flag => entry(flag, await preopens([flag], preopensEnv('foo', 'bar', 'baz')))))
   const expected = flags.map(flag => entry(flag, { 'foo': 'foo', 'bar': 'bar', 'baz': 'baz' }))
   assertEquals(actual, expected)
 })
