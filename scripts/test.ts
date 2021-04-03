@@ -1,7 +1,7 @@
 #! /usr/bin/env -S deno test --unstable --allow-all
 import { assertStrictEquals, assertEquals, assertNotStrictEquals } from '../utils/std/testing/asserts.ts'
 import preopensEnv from '../utils/path-like-env.ts'
-import RUN_SANE_FMT from '../utils/sane-fmt-cmd.ts'
+import { CACHE_SANE_FMT, RUN_SANE_FMT } from '../utils/sane-fmt-cmd.ts'
 import initTestEnvironment from '../utils/test-env.ts'
 import { PREOPENS_ENV_NAME, preopens } from '../index.ts'
 
@@ -10,6 +10,18 @@ const root = await Deno.makeTempDir({
   suffix: '.test-env',
 })
 Deno.chdir(root)
+
+// cache main.js prematurely to avoid deno littering logs to stderr later on
+const cachingStatus = await Deno.run({
+  cmd: [...CACHE_SANE_FMT],
+  stdin: 'null',
+  stdout: 'inherit',
+  stderr: 'inherit',
+}).status()
+if (!cachingStatus.success) {
+  console.warn('Warning: Failed to cache main.js prematurely')
+  console.warn(cachingStatus)
+}
 
 Deno.test('PREOPENS_ENV_NAME', () => {
   assertStrictEquals(PREOPENS_ENV_NAME, 'SANE_FMT_DENO_PREOPENS')
