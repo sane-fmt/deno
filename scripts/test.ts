@@ -1,5 +1,6 @@
 #! /usr/bin/env -S deno test --unstable --allow-all
 import { assertStrictEquals, assertEquals, assertNotStrictEquals } from '../utils/std/testing/asserts.ts'
+import preopensEnv from '../utils/path-like-env.ts'
 import SANE_FMT_CMD from '../utils/sane-fmt-cmd.ts'
 import initTestEnvironment from '../utils/test-env.ts'
 import { PREOPENS_ENV_NAME, preopens } from '../index.ts'
@@ -40,14 +41,14 @@ Deno.test('preopens([--include <filename>]) returns <filename>', async () => {
 
 Deno.test('preopens([], <env>) returns <env> and current directory', async () => {
   await initTestEnvironment(root)
-  const actual = await preopens([], 'foo:bar:baz')
+  const actual = await preopens([], preopensEnv('foo', 'bar', 'baz'))
   const expected = { '.': '.', 'foo': 'foo', 'bar': 'bar', 'baz': 'baz' }
   assertEquals(actual, expected)
 })
 
 Deno.test('preopens(<list>, <env>) includes <env> in the result', async () => {
   await initTestEnvironment(root)
-  const actual = await preopens(['dir/file.ts', 'dir/not-exist'], 'foo:bar:baz')
+  const actual = await preopens(['dir/file.ts', 'dir/not-exist'], preopensEnv('foo', 'bar', 'baz'))
   const expected = { 'dir': 'dir', 'foo': 'foo', 'bar': 'bar', 'baz': 'baz' }
   assertEquals(actual, expected)
 })
@@ -132,7 +133,7 @@ Deno.test('use sane-fmt with --include and $SANE_FMT_DENO_PREOPENS', async () =>
   await initTestEnvironment(root)
   const output = await runSaneFmt(['--include=include/include.txt'], {
     env: {
-      SANE_FMT_DENO_PREOPENS: 'include:correct-formatting:incorrect-formatting',
+      SANE_FMT_DENO_PREOPENS: preopensEnv('include', 'correct-formatting', 'incorrect-formatting'),
     },
   })
   assertStrictEquals(output.status.success, false)
@@ -143,7 +144,7 @@ Deno.test('use sane-fmt with --include - and $SANE_FMT_DENO_PREOPENS', async () 
   await initTestEnvironment(root)
   const output = await runSaneFmt(['--include', '-'], {
     env: {
-      SANE_FMT_DENO_PREOPENS: 'correct-formatting',
+      SANE_FMT_DENO_PREOPENS: preopensEnv('correct-formatting'),
     },
     stdin: 'correct-formatting\n',
   })
@@ -155,7 +156,7 @@ Deno.test('use sane-fmt with --include=- and $SANE_FMT_DENO_PREOPENS', async () 
   await initTestEnvironment(root)
   const output = await runSaneFmt(['--include=-'], {
     env: {
-      SANE_FMT_DENO_PREOPENS: 'correct-formatting',
+      SANE_FMT_DENO_PREOPENS: preopensEnv('correct-formatting'),
     },
     stdin: 'correct-formatting\n',
   })
