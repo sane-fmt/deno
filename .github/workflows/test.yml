@@ -1,0 +1,44 @@
+name: Test
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache
+        timeout-minutes: 1
+        continue-on-error: true
+        uses: actions/cache@v2.1.4
+        with:
+          path: ~/.cache/deno
+          key: deno-${{ runner.os }}-${{ hashFiles('{lib,utils}/{std,x}/**/*.ts') }}
+          restore-keys: |
+            deno-${{ runner.os }}-${{ hashFiles('{lib,utils}/{std,x}/**/*.ts') }}
+            deno-${{ runner.os }}-
+            deno-
+      - name: Install Deno
+        uses: denolib/setup-deno@v2.3.0
+        with:
+          deno-version: 1.8.0
+      - name: Test
+        run: deno test --unstable --allow-all scripts/test.ts
+      - name: Prepare for uploading deno cache as artifacts
+        run: cp -r ~/.cache/deno deno-cache.tmp
+      - name: Upload deno cache as artifacts
+        uses: actions/upload-artifact@v2.2.2
+        with:
+          name: deno-cache
+          path: deno-cache.tmp
