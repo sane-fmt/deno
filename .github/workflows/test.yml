@@ -36,6 +36,8 @@ jobs:
         uses: denolib/setup-deno@v2.3.0
         with:
           deno-version: 1.8.0
+      - name: Cache
+        run: deno cache --unstable **/*.{js,ts}
       - name: Test
         run: deno test --unstable --allow-all scripts/test.ts
       - name: Prepare for uploading deno cache as artifacts
