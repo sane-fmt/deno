@@ -1,5 +1,6 @@
 #! /usr/bin/env -S deno test --unstable --allow-all
 import { assertStrictEquals, assertEquals, assertNotStrictEquals } from '../utils/std/testing/asserts.ts'
+import { SEP } from '../utils/std/path.ts'
 import preopensEnv from '../utils/path-like-env.ts'
 import { CACHE_SANE_FMT, RUN_SANE_FMT } from '../utils/sane-fmt-cmd.ts'
 import initTestEnvironment from '../utils/test-env.ts'
@@ -27,40 +28,47 @@ Deno.test('PREOPENS_ENV_NAME', () => {
   assertStrictEquals(PREOPENS_ENV_NAME, 'SANE_FMT_DENO_PREOPENS')
 })
 
+const actualPreopens = (posixPaths: string[], env?: string) =>
+  preopens(posixPaths.map(path => path.replaceAll('/', SEP)), env)
+const expectedPreopens = (...posixPaths: string[]) =>
+  Object.fromEntries(
+    posixPaths.map(path => [path, path]),
+  )
+
 Deno.test('preopens([]) returns only current directory', async () => {
-  assertEquals(await preopens([]), { '.': '.' })
+  assertEquals(await actualPreopens([]), expectedPreopens('.'))
 })
 
 Deno.test('preopens([<filename>]) returns only dirname(<filename>)', async () => {
   await initTestEnvironment(root)
-  assertEquals(await preopens(['dir/dir/file.ts']), { 'dir/dir': 'dir/dir' })
+  assertEquals(await actualPreopens(['dir/dir/file.ts']), expectedPreopens('dir/dir'))
 })
 
 Deno.test('preopens([<dirname>]) returns only <dirname>', async () => {
   await initTestEnvironment(root)
-  assertEquals(await preopens(['dir/dir']), { 'dir/dir': 'dir/dir' })
+  assertEquals(await actualPreopens(['dir/dir']), expectedPreopens('dir/dir'))
 })
 
 Deno.test('preopens ignores names that do not exist', async () => {
   await initTestEnvironment(root)
-  assertEquals(await preopens(['dir/file.ts', 'dir/not-exist']), { 'dir': 'dir' })
+  assertEquals(await actualPreopens(['dir/file.ts', 'dir/not-exist']), expectedPreopens('dir'))
 })
 
 Deno.test('preopens([--include <filename>]) returns <filename>', async () => {
   await initTestEnvironment(root)
-  assertEquals(await preopens(['--include', 'include/include.txt']), { 'include': 'include' })
+  assertEquals(await actualPreopens(['--include', 'include/include.txt']), expectedPreopens('include'))
 })
 
 Deno.test('preopens([], <env>) returns <env> and current directory', async () => {
   await initTestEnvironment(root)
-  const actual = await preopens([], preopensEnv('foo', 'bar', 'baz'))
+  const actual = await actualPreopens([], preopensEnv('foo', 'bar', 'baz'))
   const expected = { '.': '.', 'foo': 'foo', 'bar': 'bar', 'baz': 'baz' }
   assertEquals(actual, expected)
 })
 
 Deno.test('preopens(<list>, <env>) includes <env> in the result', async () => {
   await initTestEnvironment(root)
-  const actual = await preopens(['dir/file.ts', 'dir/not-exist'], preopensEnv('foo', 'bar', 'baz'))
+  const actual = await actualPreopens(['dir/file.ts', 'dir/not-exist'], preopensEnv('foo', 'bar', 'baz'))
   const expected = { 'dir': 'dir', 'foo': 'foo', 'bar': 'bar', 'baz': 'baz' }
   assertEquals(actual, expected)
 })
@@ -68,7 +76,7 @@ Deno.test('preopens(<list>, <env>) includes <env> in the result', async () => {
 Deno.test('preopens(--help|-h|--version|-V|--stdio) returns an empty object', async () => {
   const flags = ['--help', '-h', '--version', '-V', '--stdio']
   const entry = <Value>(flag: string, value: Value) => ({ flag, value })
-  const actual = await Promise.all(flags.map(async flag => entry(flag, await preopens([flag]))))
+  const actual = await Promise.all(flags.map(async flag => entry(flag, await actualPreopens([flag]))))
   const expected = flags.map(flag => entry(flag, {}))
   assertEquals(actual, expected)
 })
@@ -76,7 +84,7 @@ Deno.test('preopens(--help|-h|--version|-V|--stdio) returns an empty object', as
 Deno.test('preopens(--help|-h|--version|-V|--stdio) returns an empty object regardless of other targets', async () => {
   const flags = ['--help', '-h', '--version', '-V', '--stdio']
   const entry = <Value>(flag: string, value: Value) => ({ flag, value })
-  const actual = await Promise.all(flags.map(async flag => entry(flag, await preopens(['foo', flag, 'bar']))))
+  const actual = await Promise.all(flags.map(async flag => entry(flag, await actualPreopens(['foo', flag, 'bar']))))
   const expected = flags.map(flag => entry(flag, {}))
   assertEquals(actual, expected)
 })
@@ -86,8 +94,8 @@ Deno.test('preopens(--help|-h|--version|-V|--stdio, <env>) respects <env>', asyn
   const flags = ['--help', '-h', '--version', '-V', '--stdio']
   const entry = <Value>(flag: string, value: Value) => ({ flag, value })
   const env = preopensEnv('foo', 'bar', 'baz')
-  const actual = await Promise.all(flags.map(async flag => entry(flag, await preopens([flag], env))))
-  const expected = flags.map(flag => entry(flag, { 'foo': 'foo', 'bar': 'bar', 'baz': 'baz' }))
+  const actual = await Promise.all(flags.map(async flag => entry(flag, await actualPreopens([flag], env))))
+  const expected = flags.map(flag => entry(flag, expectedPreopens('foo', 'bar', 'baz')))
   assertEquals(actual, expected)
 })
 
@@ -144,7 +152,7 @@ Deno.test('use sane-fmt to reformatted incorrectly formatted files', async () =>
 
 Deno.test('use sane-fmt with --include and $SANE_FMT_DENO_PREOPENS', async () => {
   await initTestEnvironment(root)
-  const output = await runSaneFmt(['--include=include/include.txt'], {
+  const output = await runSaneFmt([`--include=include${SEP}include.txt`], {
     env: {
       SANE_FMT_DENO_PREOPENS: preopensEnv('include', 'correct-formatting', 'incorrect-formatting'),
     },
