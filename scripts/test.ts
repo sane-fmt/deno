@@ -62,14 +62,14 @@ Deno.test('preopens([--include <filename>]) returns <filename>', async () => {
 Deno.test('preopens([], <env>) returns <env> and current directory', async () => {
   await initTestEnvironment(root)
   const actual = await actualPreopens([], preopensEnv('foo', 'bar', 'baz'))
-  const expected = { '.': '.', 'foo': 'foo', 'bar': 'bar', 'baz': 'baz' }
+  const expected = expectedPreopens('.', 'foo', 'bar', 'baz')
   assertEquals(actual, expected)
 })
 
 Deno.test('preopens(<list>, <env>) includes <env> in the result', async () => {
   await initTestEnvironment(root)
   const actual = await actualPreopens(['dir/file.ts', 'dir/not-exist'], preopensEnv('foo', 'bar', 'baz'))
-  const expected = { 'dir': 'dir', 'foo': 'foo', 'bar': 'bar', 'baz': 'baz' }
+  const expected = expectedPreopens('dir', 'foo', 'bar', 'baz')
   assertEquals(actual, expected)
 })
 
