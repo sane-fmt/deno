@@ -4,9 +4,9 @@ Opinionated code formatter for TypeScript and JavaScript.
 
 * Main Repo: [sane-fmt/sane-fmt](https://github.com/sane-fmt/sane-fmt)
   * [Issues](https://github.com/sane-fmt/sane-fmt/issues)
-* Version: 0.8.6
-  - [GitHub Release](https://github.com/sane-fmt/sane-fmt/releases/tag/0.8.6)
-  - [Deno Page](https://deno.land/x/sane_fmt@0.8.6)
+* Version: 0.8.7
+  - [GitHub Release](https://github.com/sane-fmt/sane-fmt/releases/tag/0.8.7)
+  - [Deno Page](https://deno.land/x/sane_fmt@0.8.7)
 
 ## Usage in Deno
 
@@ -25,7 +25,7 @@ deno install \
   --allow-write \
   --allow-env \
   --name=sane-fmt \
-  https://deno.land/x/sane_fmt@0.8.6/main.js
+  https://deno.land/x/sane_fmt@0.8.7/main.js
 ```
 
 #### CLI Usage
@@ -37,7 +37,7 @@ deno install \
 **Usage:**
 
 ```
-sane-fmt 0.8.6
+sane-fmt 0.8.7
 Opinionated code formatter for TypeScript and JavaScript
 
 USAGE:
@@ -84,14 +84,14 @@ ARGS:
 
 ### Programming Interface
 
-* [/x/sane_fmt](https://deno.land/x/sane_fmt@0.8.6/index.ts)
-* [API Reference](https://doc.deno.land/https/deno.land//x/sane_fmt@0.8.6/index.ts)
+* [/x/sane_fmt](https://deno.land/x/sane_fmt@0.8.7/index.ts)
+* [API Reference](https://doc.deno.land/https/deno.land//x/sane_fmt@0.8.7/index.ts)
 
 #### Example: Format a file
 
 ```javascript
 import Context from 'https://deno.land/std@0.91.0/wasi/snapshot_preview1.ts'
-import { u8v } from 'https://deno.land/x/sane_fmt@0.8.6/index.ts'
+import { u8v } from 'https://deno.land/x/sane_fmt@0.8.7/index.ts'
 const context = new Context({
   args: ['sane-fmt', 'example-directory/example-file.ts'],
   stdin: Deno.stdin.rid,
@@ -118,7 +118,7 @@ if (status !== 0) {
 
 ```javascript
 import Context from 'https://deno.land/std@0.91.0/wasi/snapshot_preview1.ts'
-import { u8v } from 'https://deno.land/x/sane_fmt@0.8.6/index.ts'
+import { u8v } from 'https://deno.land/x/sane_fmt@0.8.7/index.ts'
 const context = new Context({
   args: ['sane-fmt', '--stdio'],
   stdin: Deno.stdin.rid,
