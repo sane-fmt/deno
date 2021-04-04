@@ -43,7 +43,7 @@ jobs:
       - name: Cache
         run: deno cache --unstable **/*.{js,ts}
       - name: Inspect (Windows)
-        if: matrix.os == 'windows-latest'
+        if: matrix.env.os == 'windows-latest'
         run: deno run --unstable --allow-all dbg.inspect.js
       - name: Test
         run: deno test --unstable --allow-all scripts/test.ts
