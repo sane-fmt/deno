@@ -64,10 +64,7 @@ const instance = await WebAssembly.instantiate(module, {
   wasi_snapshot_preview1: context.exports,
 })
 const status = context.start(instance)
-if (status === null) {
-  throw new Error('Failed to execute sane-fmt')
-}
-if (status !== 0) {
+if (status) {
   throw new Error(`Program exits with code ${status}`)
 }
 ```
@@ -88,10 +85,7 @@ const instance = await WebAssembly.instantiate(module, {
   wasi_snapshot_preview1: context.exports,
 })
 const status = context.start(instance)
-if (status === null) {
-  throw new Error('Failed to execute sane-fmt')
-}
-if (status !== 0) {
+if (status) {
   throw new Error(`Program exits with code ${status}`)
 }
 ```
