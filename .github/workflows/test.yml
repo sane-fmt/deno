@@ -45,6 +45,8 @@ jobs:
       - name: Test
         run: deno test --unstable --allow-all scripts/test.ts
       - name: Prepare for uploading deno cache as artifacts
+        timeout-minutes: 1
+        continue-on-error: true
         env:
           SOURCE: ${{ matrix.env.cache }}
           TARGET: deno-cache.${{ matrix.env.os }}.tmp
@@ -52,6 +54,8 @@ jobs:
           eval "source=$SOURCE"
           cp -r "$source" "$TARGET"
       - name: Upload deno cache as artifacts
+        timeout-minutes: 1
+        continue-on-error: true
         uses: actions/upload-artifact@v2.2.2
         with:
           name: deno-cache.${{ matrix.env.os }}
