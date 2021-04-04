@@ -6,7 +6,7 @@ import ROOT from './workspace.ts'
 export const code = (base64: string): string =>
   [
     '/// <reference types="./base64.d.ts" />',
-    '// sane-fmt-ignore',
+    '// sane-fmt-ignore-file',
     '/**',
     ' * Base64 representation of sane-fmt wasi executable',
     ' * @type {string}',
