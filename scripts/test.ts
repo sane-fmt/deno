@@ -4,7 +4,7 @@ import { SEP } from '../utils/std/path.ts'
 import preopensEnv from '../utils/path-like-env.ts'
 import { CACHE_SANE_FMT, RUN_SANE_FMT } from '../utils/sane-fmt-cmd.ts'
 import initTestEnvironment from '../utils/test-env.ts'
-import { PREOPENS_ENV_NAME, preopens } from '../index.ts'
+import { PREOPENS_ENV_NAME, DEFAULT_WINDOWS_DEVICE_MAPPER, preopens, fromWindowsPath } from '../index.ts'
 
 const root = await Deno.makeTempDir({
   prefix: 'sane-fmt-deno.',
@@ -26,6 +26,18 @@ if (!cachingStatus.success) {
 
 Deno.test('PREOPENS_ENV_NAME', () => {
   assertStrictEquals(PREOPENS_ENV_NAME, 'SANE_FMT_DENO_PREOPENS')
+})
+
+Deno.test('DEFAULT_WINDOWS_DEVICE_MAPPER', () => {
+  assertStrictEquals(DEFAULT_WINDOWS_DEVICE_MAPPER('C'), '/mnt/C')
+})
+
+Deno.test('fromWindowsPath(<absolute>) returns WASI compatible absolute path', () => {
+  assertStrictEquals(fromWindowsPath('C:\\User\\USERNAME', DEFAULT_WINDOWS_DEVICE_MAPPER), '/mnt/C/User/USERNAME')
+})
+
+Deno.test('fromWindowsPath(<relative>) returns WASI compatible relative path', () => {
+  assertStrictEquals(fromWindowsPath('Foo\\Bar\\Baz', DEFAULT_WINDOWS_DEVICE_MAPPER), 'Foo/Bar/Baz')
 })
 
 const transformPosixPath = (path: string) => path.replaceAll('/', SEP)
