@@ -23,7 +23,7 @@ const UPPERCASE_ALPHABET = [
   'U',
   'V',
   'W',
-  'Path',
+  'P',
   'Y',
   'Z',
 ] as const
