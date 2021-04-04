@@ -16,7 +16,9 @@ Opinionated code formatter for TypeScript and JavaScript.
 
 ### Command Line Interface
 
-#### Installation
+#### CLI Usage
+
+**Installation:**
 
 ```sh
 deno install \
@@ -27,8 +29,6 @@ deno install \
   --name=sane-fmt \
   https://deno.land/x/sane_fmt@0.8.7/main.js
 ```
-
-#### CLI Usage
 
 **Environment Variables:**
 

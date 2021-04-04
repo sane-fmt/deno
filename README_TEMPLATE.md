@@ -16,7 +16,9 @@
 
 ### Command Line Interface
 
-#### Installation
+#### CLI Usage
+
+**Installation:**
 
 ```sh
 deno install \
@@ -27,8 +29,6 @@ deno install \
   --name=sane-fmt \
   https://deno.land/x/sane_fmt@{VERSION}/main.js
 ```
-
-#### CLI Usage
 
 **Environment Variables:**
 
