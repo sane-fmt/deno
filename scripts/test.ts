@@ -230,7 +230,7 @@ testPOSIX('use sane-fmt with --include and $SANE_FMT_DENO_PREOPENS', async () =>
     },
   })
   assertStrictEquals(output.status.success, false)
-  assertStrictEquals(output.stderr, 'Error: "There are 1 unformatted files"')
+  assertStrictEquals(output.stderr, 'ERROR: There are 1 unformatted files')
 })
 
 testPOSIX('use sane-fmt with --include - and $SANE_FMT_DENO_PREOPENS', async () => {
