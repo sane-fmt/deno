@@ -18,6 +18,8 @@ Opinionated code formatter for TypeScript and JavaScript.
 
 #### CLI Usage
 
+##### [Main CLI](https://deno.land/x/sane_fmt@0.8.7/main.js)
+
 **Installation:**
 
 ```sh
@@ -80,6 +82,31 @@ ARGS:
 
             If none are provided, a default set of files will be assumed
 
+```
+
+##### [Stdio CLI](https://deno.land/x/sane_fmt@0.8.7/stdio.js)
+
+Unlike the feature-packed [main CLI](#main-cli), the stdio CLI only function is to read TypeScript code from stdin and print formatted code to stdout.
+
+**Installation:**
+
+```sh
+deno install \
+  --unstable \
+  --name=sane-fmt-stdio \
+  https://deno.land/x/sane_fmt@0.8.7/stdio.js
+```
+
+**Usage Example:**
+
+```sh
+echo 'const message="hello world";' | sane-fmt-stdio
+```
+
+_Expected Output:_
+
+```txt
+const message = 'hello world'
 ```
 
 ### Programming Interface
