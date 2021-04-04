@@ -3,6 +3,7 @@ import { assertStrictEquals, assertEquals, assertNotStrictEquals } from '../util
 import { SEP } from '../utils/std/path.ts'
 import preopensEnv from '../utils/path-like-env.ts'
 import { CACHE_SANE_FMT, RUN_SANE_FMT } from '../utils/sane-fmt-cmd.ts'
+import { CACHE_STDIO, RUN_STDIO } from '../utils/stdio-cmd.ts'
 import initTestEnvironment from '../utils/test-env.ts'
 import {
   PREOPENS_ENV_NAME,
@@ -19,15 +20,27 @@ const root = await Deno.makeTempDir({
 Deno.chdir(root)
 
 // cache main.js prematurely to avoid deno littering logs to stderr later on
-const cachingStatus = await Deno.run({
+const mainCachingStatus = await Deno.run({
   cmd: [...CACHE_SANE_FMT],
   stdin: 'null',
   stdout: 'inherit',
   stderr: 'inherit',
 }).status()
-if (!cachingStatus.success) {
+if (!mainCachingStatus.success) {
   console.warn('Warning: Failed to cache main.js prematurely')
-  console.warn(cachingStatus)
+  console.warn(mainCachingStatus)
+}
+
+// cache main.js prematurely to avoid deno littering logs to stderr later on
+const stdioCachingStatus = await Deno.run({
+  cmd: [...CACHE_STDIO],
+  stdin: 'null',
+  stdout: 'inherit',
+  stderr: 'inherit',
+}).status()
+if (!stdioCachingStatus.success) {
+  console.warn('Warning: Failed to cache stdio.js prematurely')
+  console.warn(stdioCachingStatus)
 }
 
 Deno.test('PREOPENS_ENV_NAME', () => {
@@ -113,6 +126,36 @@ Deno.test('preopens(--help|-h|--version|-V|--stdio, <env>) respects <env>', asyn
   const actual = await Promise.all(flags.map(async flag => entry(flag, await actualPreopens([flag], env))))
   const expected = flags.map(flag => entry(flag, expectedPreopens('foo', 'bar', 'baz')))
   assertEquals(actual, expected)
+})
+
+async function runStdio(inputCode: string) {
+  const process = Deno.run({
+    cmd: [...RUN_STDIO],
+    stdin: 'piped',
+    stdout: 'piped',
+    stderr: 'piped',
+  })
+  const textEncoder = new TextEncoder()
+  const textDecoder = new TextDecoder()
+  await process.stdin!.write(textEncoder.encode(inputCode))
+  process.stdin!.close()
+  const status = await process.status()
+  const stdout = textDecoder.decode(await process.output())
+  const stderr = textDecoder.decode(await process.stderrOutput())
+  process.close()
+  return { status, stdout, stderr }
+}
+
+Deno.test('sane-fmt-stdio works as expected', async () => {
+  const inputCode = 'export\tconst\tfoo="hello world";'
+  const output1 = await runStdio(inputCode)
+  assertStrictEquals(output1.status.success, true)
+  assertNotStrictEquals(output1.stdout, inputCode)
+  assertStrictEquals(output1.stderr, '')
+  const output2 = await runStdio(output1.stdout)
+  assertStrictEquals(output2.status.success, true)
+  assertStrictEquals(output2.stdout, output1.stdout)
+  assertStrictEquals(output2.stderr, '')
 })
 
 interface RunSaneFmtOptions {
