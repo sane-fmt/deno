@@ -1,5 +1,5 @@
 import { ensureFile } from './std/fs.ts'
-import { join } from './std/path.ts'
+import { join, SEP } from './std/path.ts'
 
 type Directory = {
   readonly [path: string]: File | Directory
@@ -15,6 +15,7 @@ export async function buildFileSystemTree(tree: FileSystemTree, ...prefix: strin
       await Promise.all(
         Object
           .entries(tree)
+          .map(([path, content]) => [path.replaceAll('/', SEP), content] as const)
           .map(([path, content]) => buildFileSystemTree(content, ...prefix, path)),
       )
       return
