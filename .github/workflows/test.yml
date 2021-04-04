@@ -4,6 +4,10 @@ on:
   - push
   - pull_request
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   test:
     runs-on: ${{ matrix.env.os }}
@@ -37,7 +41,7 @@ jobs:
         with:
           deno-version: 1.8.0
       - name: Cache
-        run: bash -ic 'deno cache --unstable **/*.{js,ts}'
+        run: deno cache --unstable **/*.{js,ts}
       - name: Test
         run: deno test --unstable --allow-all scripts/test.ts
       - name: Prepare for uploading deno cache as artifacts
