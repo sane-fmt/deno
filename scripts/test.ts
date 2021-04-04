@@ -4,7 +4,13 @@ import { SEP } from '../utils/std/path.ts'
 import preopensEnv from '../utils/path-like-env.ts'
 import { CACHE_SANE_FMT, RUN_SANE_FMT } from '../utils/sane-fmt-cmd.ts'
 import initTestEnvironment from '../utils/test-env.ts'
-import { PREOPENS_ENV_NAME, DEFAULT_WINDOWS_DEVICE_MAPPER, preopens, fromWindowsPath } from '../index.ts'
+import {
+  PREOPENS_ENV_NAME,
+  DEFAULT_WINDOWS_DEVICE_MAPPER,
+  WINDOWS_ERROR_MESSAGE,
+  preopens,
+  fromWindowsPath,
+} from '../index.ts'
 
 const root = await Deno.makeTempDir({
   prefix: 'sane-fmt-deno.',
@@ -136,21 +142,34 @@ async function runSaneFmt(args: readonly string[], options: RunSaneFmtOptions = 
   return { status, stdout, stderr }
 }
 
-Deno.test('use sane-fmt to check correctly formatted files', async () => {
+type TestCaller = (name: string, fn: () => void | Promise<void>) => void
+const isWindows = Deno.build.os === 'windows'
+const isPOSIX = Deno.build.os === 'linux' || Deno.build.os === 'darwin'
+const testWindows: TestCaller = (name, fn) => Deno.test({ name, fn, ignore: isPOSIX })
+const testPOSIX: TestCaller = (name, fn) => Deno.test({ name, fn, ignore: isWindows })
+
+testWindows('main.js does not support Windows', async () => {
+  const output = await runSaneFmt([])
+  assertStrictEquals(output.status.success, false)
+  assertStrictEquals(output.stdout, '')
+  assertStrictEquals(output.stderr, WINDOWS_ERROR_MESSAGE)
+})
+
+testPOSIX('use sane-fmt to check correctly formatted files', async () => {
   await initTestEnvironment(root)
   const output = await runSaneFmt(['correct-formatting'])
   assertStrictEquals(output.status.success, true)
   assertStrictEquals(output.stderr, '')
 })
 
-Deno.test('use sane-fmt to check incorrectly formatted files', async () => {
+testPOSIX('use sane-fmt to check incorrectly formatted files', async () => {
   await initTestEnvironment(root)
   const output = await runSaneFmt(['incorrect-formatting'])
   assertStrictEquals(output.status.success, false)
   assertNotStrictEquals(output.stderr, '')
 })
 
-Deno.test('use sane-fmt to reformatted incorrectly formatted files', async () => {
+testPOSIX('use sane-fmt to reformatted incorrectly formatted files', async () => {
   await initTestEnvironment(root)
   const writeOutput = await runSaneFmt(['--write', 'incorrect-formatting'])
   assertStrictEquals(writeOutput.status.success, true)
@@ -160,7 +179,7 @@ Deno.test('use sane-fmt to reformatted incorrectly formatted files', async () =>
   assertStrictEquals(checkOutput.stderr, '')
 })
 
-Deno.test('use sane-fmt with --include and $SANE_FMT_DENO_PREOPENS', async () => {
+testPOSIX('use sane-fmt with --include and $SANE_FMT_DENO_PREOPENS', async () => {
   await initTestEnvironment(root)
   const output = await runSaneFmt([`--include=include${SEP}include.txt`], {
     env: {
@@ -171,7 +190,7 @@ Deno.test('use sane-fmt with --include and $SANE_FMT_DENO_PREOPENS', async () =>
   assertStrictEquals(output.stderr, 'Error: "There are 1 unformatted files"')
 })
 
-Deno.test('use sane-fmt with --include - and $SANE_FMT_DENO_PREOPENS', async () => {
+testPOSIX('use sane-fmt with --include - and $SANE_FMT_DENO_PREOPENS', async () => {
   await initTestEnvironment(root)
   const output = await runSaneFmt(['--include', '-'], {
     env: {
@@ -183,7 +202,7 @@ Deno.test('use sane-fmt with --include - and $SANE_FMT_DENO_PREOPENS', async () 
   assertStrictEquals(output.stderr, '')
 })
 
-Deno.test('use sane-fmt with --include=- and $SANE_FMT_DENO_PREOPENS', async () => {
+testPOSIX('use sane-fmt with --include=- and $SANE_FMT_DENO_PREOPENS', async () => {
   await initTestEnvironment(root)
   const output = await runSaneFmt(['--include=-'], {
     env: {
@@ -195,7 +214,7 @@ Deno.test('use sane-fmt with --include=- and $SANE_FMT_DENO_PREOPENS', async () 
   assertStrictEquals(output.stderr, '')
 })
 
-Deno.test('use sane-fmt with --stdio', async () => {
+testPOSIX('use sane-fmt with --stdio', async () => {
   await initTestEnvironment(root)
   const input = 'export const hello = "world";'
   const output1 = await runSaneFmt(['--stdio'], { stdin: input })
