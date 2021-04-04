@@ -1,5 +1,6 @@
 import { dirname, delimiter } from './std/path.ts'
 import xArgs, { FlagDescriptor, BinaryFlag, MAIN_COMMAND } from './x/args.ts'
+import getWasiPath from './wasi-path.ts'
 
 /**
  * Extract names of files and folders from an array of CLI arguments
@@ -37,7 +38,7 @@ function getTargetFiles(args: readonly string[]) {
  */
 function parsePreopensEnv(env?: string): Record<string, string> {
   if (!env) return {}
-  const entries = env.split(delimiter).map(path => [path, path])
+  const entries = env.split(delimiter).map(path => [getWasiPath(path), path])
   return Object.fromEntries(entries)
 }
 
@@ -71,7 +72,7 @@ export async function preopens(args: readonly string[], env?: string): Promise<R
 
   for (const name of directories) {
     if (name === null) continue
-    preopens[name] = name
+    preopens[getWasiPath(name)] = name
   }
 
   return preopens
