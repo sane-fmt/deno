@@ -21,7 +21,7 @@ jobs:
           - os: macos-latest
             cache: ~/Library/Caches/deno
           - os: windows-latest
-            cache: ~/.deno
+            cache: ~/AppData/Local/deno
 
     steps:
       - uses: actions/checkout@v2
