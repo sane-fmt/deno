@@ -20,6 +20,8 @@ Opinionated code formatter for TypeScript and JavaScript.
 
 ##### [Main CLI](https://deno.land/x/sane_fmt@0.8.7/main.js)
 
+> ⚠ WARNING: Due to technical limitations, the main CLI currently does not support Windows. You may download the native version from [the GitHub Release page of sane-fmt](https://github.com/sane-fmt/sane-fmt/releases). [The stdio CLI](#stdio-cli) is still supported.
+
 **Installation:**
 
 ```sh
