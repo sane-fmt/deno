@@ -44,7 +44,8 @@ export interface WindowsDeviceMapper<WasiPathPrefix extends string> {
 }
 
 /** Default device mapper to use */
-export const DEFAULT_WINDOWS_DEVICE_MAPPER: WindowsDeviceMapper<`/mnt/${string}`> = device => `/mnt/${device}` as const
+export const DEFAULT_WINDOWS_DEVICE_MAPPER: WindowsDeviceMapper<`/mnt/${UppercaseAlphabet}`> = device =>
+  `/mnt/${device}` as const
 
 /**
  * Convert a Windows path to a WASI compatible path
