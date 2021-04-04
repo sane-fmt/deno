@@ -16,9 +16,7 @@
 
 ### Command Line Interface
 
-#### CLI Usage
-
-##### [Main CLI](https://deno.land/x/sane_fmt@{VERSION}/main.js)
+#### [Main CLI](https://deno.land/x/sane_fmt@{VERSION}/main.js)
 
 > ⚠ WARNING: Due to technical limitations, the main CLI currently does not support Windows. You may download the native version from [the GitHub Release page of sane-fmt](https://github.com/sane-fmt/sane-fmt/releases). [The stdio CLI](#stdio-cli) is still supported.
 
@@ -44,7 +42,7 @@ deno install \
 {CLI_USAGE}
 ```
 
-##### [Stdio CLI](https://deno.land/x/sane_fmt@{VERSION}/stdio.js)
+#### [Stdio CLI](https://deno.land/x/sane_fmt@{VERSION}/stdio.js)
 
 Unlike the feature-packed [main CLI](#main-cli), the stdio CLI only function is to read TypeScript code from stdin and print formatted code to stdout.
 
