@@ -4,7 +4,7 @@ export type AbsoluteURL = `file:///${string}`
 export const isAbsolute = (url: string): url is AbsoluteURL => url.startsWith('file:///')
 
 const PROTOCOL_REGEX = /^file:\/\//
-const WINDOWS_PREFIX_REGEX = /^file:\/\/\/(?<drive>[A-Z]+):/
+const WINDOWS_PREFIX_REGEX = /^file:\/\/\/(?<drive>[A-Z]):/
 
 export const isWindowsAbsolute = (url: string) => WINDOWS_PREFIX_REGEX.test(url)
 
