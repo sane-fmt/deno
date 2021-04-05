@@ -70,7 +70,12 @@ try {
   await Promise.all(
     ['README.md', 'lib/README.md']
       .map(path => join(ROOT, path))
-      .map(path => Deno.writeTextFile(path, readmeContent)),
+      .map(path =>
+        Deno.writeTextFile(path, readmeContent).catch(error => {
+          console.error(`Failed to write to ${path}`)
+          throw error
+        })
+      ),
   )
 } catch (error) {
   console.error(error instanceof Error ? error.toString() : error)
