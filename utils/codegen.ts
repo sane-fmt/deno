@@ -1,5 +1,6 @@
 import { encode } from './std/encoding/base64.ts'
 import { join } from './std/path.ts'
+import once from './x/once.ts'
 import ROOT from './workspace.ts'
 
 export const codeBase64 = (base64: string): string =>
@@ -39,13 +40,15 @@ export class CodeGenerator {
   public readonly pathVersionJSON = join(ROOT, 'lib', 'version.json')
   public readonly pathVersionTXT = join(ROOT, 'lib', 'version.txt')
 
-  public async generateBase64() {
-    const data = await Deno
+  public readonly loadBase64 = once(() =>
+    Deno
       .readFile(this.options.filename)
       .then(encode)
       .then(codeBase64)
+  )
 
-    await Deno.writeTextFile(this.pathBase64, data)
+  public async generateBase64() {
+    await Deno.writeTextFile(this.pathBase64, await this.loadBase64())
   }
 
   public async generateVersionTS() {
@@ -69,8 +72,15 @@ export class CodeGenerator {
         throw error
       })
     }
+    const base64 = this.loadBase64().then(
+      () => handlePromise(this.generateBase64(), this.pathBase64),
+      error => {
+        log(`error: Failed to load base64 from ${this.options.filename}`)
+        throw error
+      },
+    )
     await Promise.all([
-      handlePromise(this.generateBase64(), this.pathBase64),
+      base64,
       handlePromise(this.generateVersionTS(), this.pathVersionTS),
       handlePromise(this.generateVersionJSON(), this.pathVersionJSON),
       handlePromise(this.generateVersionTXT(), this.pathVersionTXT),
