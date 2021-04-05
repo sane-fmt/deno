@@ -62,12 +62,13 @@ export class CodeGenerator {
 
   public async runGenerator() {
     const { log } = this.options
-    const handlePromise = (promise: Promise<void>, path: string) =>
-      promise.catch(error => {
+    async function handlePromise(promise: Promise<void>, path: string) {
+      log('Generate', path)
+      await promise.catch(error => {
         log(`error: Failed to generate ${path}`)
         throw error
       })
-    log('generating...')
+    }
     await Promise.all([
       handlePromise(this.generateBase64(), this.pathBase64),
       handlePromise(this.generateVersionTS(), this.pathVersionTS),
