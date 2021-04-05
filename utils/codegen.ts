@@ -1,6 +1,5 @@
 import { encode } from './std/encoding/base64.ts'
 import { join } from './std/path.ts'
-import Artifact from './artifact.ts'
 import ROOT from './workspace.ts'
 
 export const codeBase64 = (base64: string): string =>
@@ -26,12 +25,14 @@ export const codeVersionTS = (version: string): string =>
 
 export const codeVersionJSON = (version: string): string => JSON.stringify(version) + '\n'
 
-export class CodeGenerator<Version extends string> {
-  #artifact: Artifact<Version>
+export interface CodeGeneratorOptions {
+  readonly log: (...args: unknown[]) => void
+  readonly version: string
+  readonly filename: string
+}
 
-  constructor(artifact: Artifact<Version>) {
-    this.#artifact = artifact
-  }
+export class CodeGenerator {
+  constructor(private readonly options: CodeGeneratorOptions) {}
 
   public readonly pathBase64 = join(ROOT, 'lib', 'base64.js')
   public readonly pathVersionTS = join(ROOT, 'lib', 'version.ts')
@@ -40,7 +41,7 @@ export class CodeGenerator<Version extends string> {
 
   public async generateBase64() {
     const data = await Deno
-      .readFile(this.#artifact.path)
+      .readFile(this.options.filename)
       .then(encode)
       .then(codeBase64)
 
@@ -48,19 +49,19 @@ export class CodeGenerator<Version extends string> {
   }
 
   public async generateVersionTS() {
-    await Deno.writeTextFile(this.pathVersionTS, codeVersionTS(this.#artifact.version))
+    await Deno.writeTextFile(this.pathVersionTS, codeVersionTS(this.options.version))
   }
 
   public async generateVersionJSON() {
-    await Deno.writeTextFile(this.pathVersionJSON, codeVersionJSON(this.#artifact.version))
+    await Deno.writeTextFile(this.pathVersionJSON, codeVersionJSON(this.options.version))
   }
 
   public async generateVersionTXT() {
-    await Deno.writeTextFile(this.pathVersionTXT, this.#artifact.version)
+    await Deno.writeTextFile(this.pathVersionTXT, this.options.version)
   }
 
-  public async runGenerator(options: GenerateOptions) {
-    const { log } = options
+  public async runGenerator() {
+    const { log } = this.options
     const handlePromise = (promise: Promise<void>, path: string) =>
       promise.catch(error => {
         log(`error: Failed to generate ${path}`)
@@ -75,10 +76,6 @@ export class CodeGenerator<Version extends string> {
     ])
     log('done.')
   }
-}
-
-export interface GenerateOptions {
-  readonly log: (...args: unknown[]) => void
 }
 
 export default CodeGenerator

@@ -1,7 +1,6 @@
 #! /usr/bin/env -S deno run --unstable --allow-all
 import { join } from '../utils/std/path.ts'
-import { args, EarlyExitFlag, BinaryFlag, Option, Text, PARSE_FAILURE } from '../utils/x/args.ts'
-import Artifact from '../utils/artifact.ts'
+import { args, EarlyExitFlag, Option, Text, PARSE_FAILURE } from '../utils/x/args.ts'
 import getCliUsage from '../utils/cli-usage.ts'
 import CodeGenerator from '../utils/codegen.ts'
 import applyTemplate from '../utils/template.ts'
@@ -14,21 +13,22 @@ const parser = args
     describe: 'Show help',
     exit() {
       console.log('USAGE:')
-      console.log('  ./scripts/generate.ts [OPTIONS] <VERSION>')
+      console.log('  ./scripts/generate.ts [OPTIONS]')
       console.log(parser.help())
       return Deno.exit()
     },
   }))
-  .with(BinaryFlag('overwrite', {
-    alias: ['f'],
-    describe: 'Overwrite over existing binary',
-  }))
-  .with(BinaryFlag('noCodeGen', {
-    describe: 'Skip generating code',
-  }))
   .with(Option('description', {
     type: Text,
     describe: 'Description of sane-fmt',
+  }))
+  .with(Option('tag', {
+    type: Text,
+    describe: 'Version of sane-fmt',
+  }))
+  .with(Option('filename', {
+    type: Text,
+    describe: 'Path to the sane-fmt WASI binary',
   }))
 
 const res = parser.parse(Deno.args)
@@ -42,43 +42,36 @@ if (remainingFlags.length) {
   throw Deno.exit(1)
 }
 
-const { overwrite, noCodeGen, description } = res.value
+const { description, tag, filename } = res.value
 
-const [targetVersion, ...remainingValues] = res.remaining().rawValues()
+const remainingValues = res.remaining().rawValues()
 if (remainingValues.length) {
   console.error('Excessive arguments', remainingValues)
   throw Deno.exit(1)
 }
 
-const artifact = new Artifact(targetVersion)
-const generator = new CodeGenerator(artifact)
+const generator = new CodeGenerator({
+  log: console.error,
+  version: tag,
+  filename,
+})
 
 try {
-  await artifact.runDownloader({
-    overwrite,
-    log: console.error,
+  await generator.runGenerator()
+  const readmeTemplate = await Deno.readTextFile(join(ROOT, 'README_TEMPLATE.md'))
+  const readmeContent = applyTemplate(readmeTemplate, {
+    VERSION: tag,
+    DESCRIPTION: description,
+    CLI_USAGE: await getCliUsage('--help'),
+    DENO_VERSION: Deno.version.deno,
+    TYPESCRIPT_VERSION: Deno.version.typescript,
+    V8_VERSION: Deno.version.v8,
   })
-  if (noCodeGen) {
-    console.error('code generation is skipped.')
-  } else {
-    await generator.runGenerator({
-      log: console.error,
-    })
-    const readmeTemplate = await Deno.readTextFile(join(ROOT, 'README_TEMPLATE.md'))
-    const readmeContent = applyTemplate(readmeTemplate, {
-      VERSION: targetVersion,
-      DESCRIPTION: description,
-      CLI_USAGE: await getCliUsage('--help'),
-      DENO_VERSION: Deno.version.deno,
-      TYPESCRIPT_VERSION: Deno.version.typescript,
-      V8_VERSION: Deno.version.v8,
-    })
-    await Promise.all(
-      ['README.md', 'lib/README.md']
-        .map(path => join(ROOT, path))
-        .map(path => Deno.writeTextFile(path, readmeContent)),
-    )
-  }
+  await Promise.all(
+    ['README.md', 'lib/README.md']
+      .map(path => join(ROOT, path))
+      .map(path => Deno.writeTextFile(path, readmeContent)),
+  )
 } catch (error) {
   console.error(error instanceof Error ? error.toString() : error)
   throw Deno.exit(1)
