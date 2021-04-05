@@ -3,7 +3,7 @@ import { join } from './std/path.ts'
 import Artifact from './artifact.ts'
 import ROOT from './workspace.ts'
 
-export const code = (base64: string): string =>
+export const codeBase64 = (base64: string): string =>
   [
     '/// <reference types="./base64.d.ts" />',
     '// sane-fmt-ignore-file',
@@ -16,6 +16,16 @@ export const code = (base64: string): string =>
     '',
   ].join('\n')
 
+export const codeVersionTS = (version: string): string =>
+  [
+    '// sane-fmt-ignore-file',
+    `export const version = '${version}'`,
+    'export default version',
+    '',
+  ].join('\n')
+
+export const codeVersionJSON = (version: string): string => JSON.stringify(version) + '\n'
+
 export class CodeGenerator<Version extends string> {
   #artifact: Artifact<Version>
 
@@ -23,21 +33,46 @@ export class CodeGenerator<Version extends string> {
     this.#artifact = artifact
   }
 
-  public readonly path = join(ROOT, 'lib', 'base64.js')
+  public readonly pathBase64 = join(ROOT, 'lib', 'base64.js')
+  public readonly pathVersionTS = join(ROOT, 'lib', 'version.ts')
+  public readonly pathVersionJSON = join(ROOT, 'lib', 'version.json')
+  public readonly pathVersionTXT = join(ROOT, 'lib', 'version.txt')
 
-  public async generate() {
+  public async generateBase64() {
     const data = await Deno
       .readFile(this.#artifact.path)
       .then(encode)
-      .then(code)
+      .then(codeBase64)
 
-    await Deno.writeTextFile(this.path, data)
+    await Deno.writeTextFile(this.pathBase64, data)
+  }
+
+  public async generateVersionTS() {
+    await Deno.writeTextFile(this.pathVersionTS, codeVersionTS(this.#artifact.version))
+  }
+
+  public async generateVersionJSON() {
+    await Deno.writeTextFile(this.pathVersionJSON, codeVersionJSON(this.#artifact.version))
+  }
+
+  public async generateVersionTXT() {
+    await Deno.writeTextFile(this.pathVersionTXT, this.#artifact.version)
   }
 
   public async runGenerator(options: GenerateOptions) {
     const { log } = options
-    log(`generating ${this.path}...`)
-    await this.generate()
+    const handlePromise = (promise: Promise<void>, path: string) =>
+      promise.catch(error => {
+        log(`error: Failed to generate ${path}`)
+        throw error
+      })
+    log('generating...')
+    await Promise.all([
+      handlePromise(this.generateBase64(), this.pathBase64),
+      handlePromise(this.generateVersionTS(), this.pathVersionTS),
+      handlePromise(this.generateVersionJSON(), this.pathVersionJSON),
+      handlePromise(this.generateVersionTXT(), this.pathVersionTXT),
+    ])
     log('done.')
   }
 }
