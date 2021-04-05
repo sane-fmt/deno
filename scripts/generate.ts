@@ -68,14 +68,13 @@ try {
     V8_VERSION: Deno.version.v8,
   })
   await Promise.all(
-    ['README.md', 'lib/README.md']
-      .map(path => join(ROOT, path))
-      .map(path =>
-        Deno.writeTextFile(path, readmeContent).catch(error => {
-          console.error(`Failed to write to ${path}`)
-          throw error
-        })
-      ),
+    ['README.md', 'lib/README.md'].map(async suffix => {
+      const path = join(ROOT, suffix)
+      await Deno.writeTextFile(path, readmeContent).catch(error => {
+        console.error(`Failed to write to ${path}`)
+        throw error
+      })
+    }),
   )
 } catch (error) {
   console.error(error instanceof Error ? error.toString() : error)
