@@ -8,16 +8,13 @@ import applyTemplate from '../utils/template.ts'
 import ROOT from '../utils/workspace.ts'
 
 const parser = args
+  .describe('Download sane-fmt wasi binary and generate related files')
   .with(EarlyExitFlag('help', {
     alias: ['h'],
     describe: 'Show help',
     exit() {
-      console.log('DESCRIPTION:')
-      console.log('  Download sane-fmt wasi binary and generate related files')
-      console.log()
       console.log('USAGE:')
       console.log('  ./scripts/generate.ts [OPTIONS] <VERSION>')
-      console.log()
       console.log(parser.help())
       return Deno.exit()
     },
