@@ -75,7 +75,7 @@ const message = 'hello world'
 #### Example: Format a file
 
 ```javascript
-import Context from 'https://deno.land/std@0.91.0/wasi/snapshot_preview1.ts'
+import Context from 'https://deno.land/std@0.92.0/wasi/snapshot_preview1.ts'
 import { u8v } from 'https://deno.land/x/sane_fmt@{VERSION}/index.ts'
 const context = new Context({
   args: ['sane-fmt', 'example-directory/example-file.ts'],
@@ -99,7 +99,7 @@ if (status) {
 #### Example: Read unformatted input and print formatted output
 
 ```javascript
-import Context from 'https://deno.land/std@0.91.0/wasi/snapshot_preview1.ts'
+import Context from 'https://deno.land/std@0.92.0/wasi/snapshot_preview1.ts'
 import { u8v } from 'https://deno.land/x/sane_fmt@{VERSION}/index.ts'
 const context = new Context({
   args: ['sane-fmt', '--stdio'],
