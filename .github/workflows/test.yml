@@ -39,7 +39,7 @@ jobs:
       - name: Install Deno
         uses: denolib/setup-deno@v2.3.0
         with:
-          deno-version: 1.8.0
+          deno-version: 1.9.1
       - name: Refresh cache
         run: deno cache --unstable **/*.{ts,js}
       - name: Test

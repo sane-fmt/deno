@@ -33,7 +33,10 @@ export interface CodeGeneratorOptions {
 }
 
 export class CodeGenerator {
-  constructor(private readonly options: CodeGeneratorOptions) {}
+  readonly #options: CodeGeneratorOptions
+  constructor(options: CodeGeneratorOptions) {
+    this.#options = options
+  }
 
   public readonly pathBase64 = join(ROOT, 'lib', 'base64.js')
   public readonly pathVersionTS = join(ROOT, 'lib', 'version.ts')
@@ -42,7 +45,7 @@ export class CodeGenerator {
 
   public readonly loadBase64 = once(() =>
     Deno
-      .readFile(this.options.filename)
+      .readFile(this.#options.filename)
       .then(encode)
       .then(codeBase64)
   )
@@ -52,19 +55,19 @@ export class CodeGenerator {
   }
 
   public async generateVersionTS() {
-    await Deno.writeTextFile(this.pathVersionTS, codeVersionTS(this.options.version))
+    await Deno.writeTextFile(this.pathVersionTS, codeVersionTS(this.#options.version))
   }
 
   public async generateVersionJSON() {
-    await Deno.writeTextFile(this.pathVersionJSON, codeVersionJSON(this.options.version))
+    await Deno.writeTextFile(this.pathVersionJSON, codeVersionJSON(this.#options.version))
   }
 
   public async generateVersionTXT() {
-    await Deno.writeTextFile(this.pathVersionTXT, this.options.version)
+    await Deno.writeTextFile(this.pathVersionTXT, this.#options.version)
   }
 
   public async runGenerator() {
-    const { log } = this.options
+    const { log } = this.#options
     async function handlePromise(promise: Promise<void>, path: string) {
       log('Generate', path)
       await promise.catch(error => {
@@ -75,7 +78,7 @@ export class CodeGenerator {
     const base64 = this.loadBase64().then(
       () => handlePromise(this.generateBase64(), this.pathBase64),
       error => {
-        log(`error: Failed to load base64 from ${this.options.filename}`)
+        log(`error: Failed to load base64 from ${this.#options.filename}`)
         throw error
       },
     )
