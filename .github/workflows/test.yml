@@ -28,7 +28,7 @@ jobs:
       - name: Cache
         timeout-minutes: 1
         continue-on-error: true
-        uses: actions/cache@v2.1.5
+        uses: actions/cache@v2.1.6
         with:
           path: ${{ matrix.env.cache }}
           key: deno-${{ runner.os }}-${{ hashFiles('{lib,utils}/{std,x}/**/*.ts') }}
