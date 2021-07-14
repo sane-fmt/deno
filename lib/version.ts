@@ -1,3 +1,3 @@
 // sane-fmt-ignore-file
-export const version = '0.9.11'
+export const version = '0.10.0'
 export default version
