@@ -1,4 +1,4 @@
-#! /usr/bin/env -S deno test --unstable --allow-all
+#! /usr/bin/env -S deno test --allow-all
 import { assertStrictEquals, assertEquals, assertNotStrictEquals } from '../utils/std/testing/asserts.ts'
 import { SEP } from '../utils/std/path.ts'
 import preopensEnv from '../utils/path-like-env.ts'

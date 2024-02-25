@@ -24,7 +24,6 @@ Opinionated code formatter for TypeScript and JavaScript.
 
 ```sh
 deno install \
-  --unstable \
   --allow-read \
   --allow-write \
   --allow-env \
@@ -95,10 +94,7 @@ Unlike the feature-packed [main CLI](#main-cli), the stdio CLI only function is 
 **Installation:**
 
 ```sh
-deno install \
-  --unstable \
-  --name=sane-fmt-stdio \
-  https://deno.land/x/sane_fmt@0.18.0/stdio.js
+deno install --name=sane-fmt-stdio https://deno.land/x/sane_fmt@0.18.0/stdio.js
 ```
 
 **Usage Example:**

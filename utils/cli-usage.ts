@@ -4,7 +4,7 @@ import stripAnsi from './x/strip-ansi.ts'
 
 export async function getCliUsage(flag: '--help' | '-h'): Promise<string> {
   const process = Deno.run({
-    cmd: [Deno.execPath(), 'run', '--unstable', '--allow-env', join(ROOT, 'main.js'), flag],
+    cmd: [Deno.execPath(), 'run', '--allow-env', join(ROOT, 'main.js'), flag],
     stdin: 'null',
     stdout: 'piped',
     stderr: 'inherit',

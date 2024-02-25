@@ -1,2 +1,2 @@
-#! /usr/bin/env -S deno run --unstable
+#! /usr/bin/env -S deno run
 import './lib/stdio.js'

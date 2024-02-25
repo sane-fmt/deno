@@ -1,2 +1,2 @@
-#! /usr/bin/env -S deno run --unstable --allow-all
+#! /usr/bin/env -S deno run --allow-all
 import './lib/main.js'
