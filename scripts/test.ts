@@ -1,10 +1,4 @@
 #! /usr/bin/env -S deno test --allow-all
-import { assertStrictEquals, assertEquals, assertNotStrictEquals } from '../utils/std/testing/asserts.ts'
-import { SEP } from '../utils/std/path.ts'
-import preopensEnv from '../utils/path-like-env.ts'
-import { CACHE_SANE_FMT, RUN_SANE_FMT } from '../utils/sane-fmt-cmd.ts'
-import { CACHE_STDIO, RUN_STDIO } from '../utils/stdio-cmd.ts'
-import initTestEnvironment from '../utils/test-env.ts'
 import {
   PREOPENS_ENV_NAME,
   DEFAULT_WINDOWS_DEVICE_MAPPER,
@@ -12,6 +6,12 @@ import {
   preopens,
   fromWindowsPath,
 } from '../index.ts'
+import preopensEnv from '../utils/path-like-env.ts'
+import { CACHE_SANE_FMT, RUN_SANE_FMT } from '../utils/sane-fmt-cmd.ts'
+import { SEP } from '../utils/std/path.ts'
+import { assertStrictEquals, assertEquals, assertNotStrictEquals } from '../utils/std/testing/asserts.ts'
+import { CACHE_STDIO, RUN_STDIO } from '../utils/stdio-cmd.ts'
+import initTestEnvironment from '../utils/test-env.ts'
 
 const root = await Deno.makeTempDir({
   prefix: 'sane-fmt-deno.',

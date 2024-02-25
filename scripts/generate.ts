@@ -1,8 +1,10 @@
 #! /usr/bin/env -S deno run --allow-all
 import getCliUsage from '../utils/cli-usage.ts'
 import CodeGenerator from '../utils/codegen.ts'
+import { join } from '../utils/std/path.ts'
 import applyTemplate from '../utils/template.ts'
 import ROOT from '../utils/workspace.ts'
+import { args, EarlyExitFlag, Option, Text, PARSE_FAILURE } from '../utils/x/args.ts'
 
 const parser = args
   .describe('Download sane-fmt wasi binary and generate related files')
